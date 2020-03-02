@@ -1,0 +1,9 @@
+/.gradle
+/.idea
+/out
+/build
+/uploads
+*.iml
+*.ipr
+*.iws
+.attach_pid*
