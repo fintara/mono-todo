@@ -28,4 +28,8 @@ tasks {
   val test by creating {
     dependsOn("yarn_test")
   }
+
+  "yarn_test" {
+    dependsOn("yarn_install")
+  }
 }

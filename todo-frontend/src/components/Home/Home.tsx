@@ -21,7 +21,6 @@ const Home: React.FC = () => {
           {' '}
           <AnchorButton
             href={urls.register}
-            outlined={false}
             icon="book"
             small={true}>sign up</AnchorButton>
           {' '}
@@ -29,7 +28,6 @@ const Home: React.FC = () => {
           {' '}
           <AnchorButton
             href={urls.login}
-            outlined={false}
             icon="log-in"
             small={true}>log in</AnchorButton>
           .

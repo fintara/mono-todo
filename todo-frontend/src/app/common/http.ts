@@ -1,4 +1,9 @@
-import ky, { Options } from "ky"
+import ky from "ky/umd"
+
+type Options = {
+  headers?: Record<string, string>
+  json?: any
+}
 
 export interface HttpClient {
   get<T>(url: string): Promise<T>
@@ -10,9 +15,7 @@ export interface HttpClient {
 }
 
 export class KyHttpClient implements HttpClient {
-  private headers: {
-    [name: string]: string
-  } = {}
+  private headers: Record<string, string> = {}
 
   constructor(private baseUrl: string = "") {
   }
