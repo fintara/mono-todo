@@ -1,5 +1,5 @@
 import React from "react"
-import { AnchorButton, Card, H1 } from "@blueprintjs/core"
+import { Card, H1 } from "@blueprintjs/core"
 import Container from "../../ui/Container"
 import styles from "./styles.module.scss"
 import { urls } from "../../app/router/types"
@@ -19,17 +19,11 @@ const Home: React.FC = () => {
         <p className={styles.text}>
           In order to proceed, please
           {' '}
-          <AnchorButton
-            href={urls.register}
-            icon="book"
-            small={true}>sign up</AnchorButton>
+          <a href={urls.register}>sign up</a>
           {' '}
           or, if you already have an account,
           {' '}
-          <AnchorButton
-            href={urls.login}
-            icon="log-in"
-            small={true}>log in</AnchorButton>
+          <a href={urls.login}>log in</a>
           .
         </p>
       </Card>

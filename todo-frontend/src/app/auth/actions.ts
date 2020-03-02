@@ -1,14 +1,17 @@
 import { AsyncAction } from "overmind"
 import { Credentials, Registration } from "./types"
+import { sleep } from "../common/utils"
 
 export const login: AsyncAction<Credentials> = async ({ state, effects }, credentials) => {
-  return state.auth.state.authenticating(async () => {
+  console.log(credentials)
+  return state.auth.mode.authenticating(async () => {
     state.auth.error = null
 
     try {
+      await sleep(1000)
       state.auth.token = await effects.auth.api.login(credentials)
     } catch (e) {
-      return state.auth.state.error(() => {
+      return state.auth.mode.error(() => {
         state.auth.error = "Could not log in"
       })
     }
@@ -16,14 +19,14 @@ export const login: AsyncAction<Credentials> = async ({ state, effects }, creden
 }
 
 export const register: AsyncAction<Registration> = async ({ state, actions, effects }, form) => {
-  return state.auth.state.registering(async () => {
+  return state.auth.mode.registering(async () => {
     state.auth.error = null
 
     try {
       await effects.auth.api.register(form)
       return actions.auth.login(form)
     } catch (e) {
-      return state.auth.state.error(() => {
+      return state.auth.mode.error(() => {
         state.auth.error = "Could not register"
       })
     }

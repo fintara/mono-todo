@@ -21,8 +21,9 @@
     "page": "1.11.5",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "react-hook-form": "^4.10.1",
     "react-scripts": "3.4.0",
-    "typescript": "3.8.3"
+    "typescript": "3.7.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,5 +46,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "devDependencies": {
+    "mutationobserver-shim": "^0.3.3"
+  }
 }
