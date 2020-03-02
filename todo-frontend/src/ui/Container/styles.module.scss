@@ -1,0 +1,24 @@
+.container {
+  display         : flex;
+  align-content   : center;
+  flex-direction  : column;
+  justify-content : center;
+
+  margin          : auto;
+
+  text-align      : center;
+}
+
+.small {
+  width  : 32rem;
+  height : 32rem;
+}
+
+.normal {
+  width  : 64rem;
+  height : 32rem;
+}
+
+.full {
+  width : 100%;
+}
