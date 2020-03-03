@@ -1,0 +1,24 @@
+.item {
+  display        : flex;
+  flex-direction : row;
+  width          : 100%;
+
+  &.done {
+    text-decoration : line-through;
+    opacity         : 0.667;
+  }
+
+  .content {
+    flex-grow  : 1;
+    text-align : left;
+    font-size: 1.25em;
+
+  }
+
+  .checkboxWrapper {
+    line-height: 22.5px;
+    .checkbox {
+      margin-bottom : 0 !important;
+    }
+  }
+}

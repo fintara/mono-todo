@@ -5,12 +5,14 @@ import { useApp } from "../../app"
 import Home from "../Home"
 import Login from "../Login"
 import Register from "../Register"
+import Todos from "../Todos"
 import Error404 from "../Error404"
 
 const pagesDictionary: { [page in Page]: React.FC } = {
   "home": Home,
   "login": Login,
   "register": Register,
+  "todos": Todos,
   "error_404": Error404,
 }
 

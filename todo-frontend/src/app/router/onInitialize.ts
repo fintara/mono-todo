@@ -6,6 +6,7 @@ const onInitialize: OnInitialize = async ({ actions, effects }, instance) => {
     [urls.root]: actions.router.showHomepage,
     [urls.login]: actions.router.showLogin,
     [urls.register]: actions.router.showRegister,
+    [urls.todos]: actions.router.showTodos,
 
     "*": actions.router.showNotFound,
   })

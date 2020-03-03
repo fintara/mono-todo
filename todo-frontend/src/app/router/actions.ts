@@ -1,6 +1,8 @@
-import { mutate, Operator, pipe } from "overmind"
+import { map, mutate, Operator, pipe, run } from "overmind"
 
 import * as o from "./operators"
+import * as authO from "../auth/operators"
+import * as todosA from "../todos/actions"
 
 export const showHomepage: Operator = pipe(
   o.setPage("home"),
@@ -8,12 +10,17 @@ export const showHomepage: Operator = pipe(
 
 export const showLogin: Operator = pipe(
   o.setPage("login"),
-  mutate(({ state }) => state.auth.mode.reset()),
+  authO.resetMode(),
 )
 
 export const showRegister: Operator = pipe(
   o.setPage("register"),
-  mutate(({ state }) => state.auth.mode.reset()),
+  authO.resetMode(),
+)
+
+export const showTodos: Operator = pipe(
+  o.setPage("todos"),
+  mutate(todosA.load),
 )
 
 export const showNotFound: Operator = pipe(
