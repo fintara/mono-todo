@@ -11,6 +11,7 @@ export const api: Api = new class implements Api {
   }
 
   register(form: Registration): Promise<void> {
-    return this.http.post("/auth/register", form)
+    // return this.http.post("/auth/register", form)
+    return new Promise<void>(resolve => setTimeout(resolve, 1000))
   }
 }()

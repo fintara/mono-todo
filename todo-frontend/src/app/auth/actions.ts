@@ -1,6 +1,7 @@
 import { AsyncAction } from "overmind"
 import { sleep } from "../common/utils"
 import { Credentials, Registration } from "../../kt2ts"
+import { urls } from "../router/types"
 
 export const login: AsyncAction<Credentials> = async ({ state, effects }, credentials) => {
   console.log(credentials)
@@ -24,7 +25,9 @@ export const register: AsyncAction<Registration> = async ({ state, actions, effe
 
     try {
       await effects.auth.api.register(form)
-      return actions.auth.login(form)
+      return state.auth.mode.registered(() => {
+        effects.router.instance.redirect(urls.login)
+      })
     } catch (e) {
       return state.auth.mode.error(() => {
         state.auth.error = "Could not register"

@@ -20,7 +20,13 @@ const Login: React.FC = () => {
         <H2>Log in</H2>
 
         {state.auth.mode.current === "error" &&
-          <Callout className={styles.error} intent="danger">{state.auth.error}</Callout>}
+          <Callout className={styles.callout} intent="danger">{state.auth.error}</Callout>}
+
+        {state.auth.mode.current === "registered" &&
+          <Callout className={styles.callout} intent="success">
+            You've signed up successfully!
+            Use your credentials to log in now.
+          </Callout>}
 
         <LoginForm
           onSubmit={handleSubmit}

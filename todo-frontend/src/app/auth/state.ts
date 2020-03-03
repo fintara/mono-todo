@@ -1,7 +1,7 @@
 import { statemachine, Statemachine } from "overmind"
 
 type State = {
-  mode: Statemachine<"anonymous" | "authenticating" | "registering" | "authenticated" | "error">
+  mode: Statemachine<"anonymous" | "authenticating" | "registering" | "registered" | "authenticated" | "error">
   token: string | null
   error: string | null
 }
@@ -11,10 +11,12 @@ export const state: State = {
     initial: "anonymous",
     states: {
       anonymous: ["authenticating", "registering"],
-      authenticated: ["anonymous"],
 
       authenticating: ["error", "authenticated"],
-      registering: ["error", "authenticating"],
+      authenticated: ["anonymous"],
+
+      registering: ["error", "registered"],
+      registered: ["authenticating"],
 
       error: ["authenticating", "registering"]
     }
