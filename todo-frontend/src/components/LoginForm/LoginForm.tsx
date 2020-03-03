@@ -2,8 +2,8 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { Button } from "@blueprintjs/core"
 import styles from "./styles.module.scss"
-import { Credentials } from "../../app/auth/types"
 import Input from "../../ui/Input"
+import { Credentials } from "../../kt2ts"
 
 type Props = {
   isLoading: boolean

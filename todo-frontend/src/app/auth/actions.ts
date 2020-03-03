@@ -1,6 +1,6 @@
 import { AsyncAction } from "overmind"
-import { Credentials, Registration } from "./types"
 import { sleep } from "../common/utils"
+import { Credentials, Registration } from "../../kt2ts"
 
 export const login: AsyncAction<Credentials> = async ({ state, effects }, credentials) => {
   console.log(credentials)

@@ -6,8 +6,11 @@ import org.gradle.plugin.use.PluginDependencySpec
  */
 object Plugins {
     fun PluginDependenciesSpec.node(): PluginDependencySpec =
-            id("com.github.node-gradle.node")
+        id("com.github.node-gradle.node")
 
     fun PluginDependenciesSpec.shadowJar(): PluginDependencySpec =
-            id("com.github.johnrengelman.shadow")
+        id("com.github.johnrengelman.shadow")
+
+    fun PluginDependenciesSpec.kt2ts(): PluginDependencySpec =
+        id("se.jensim.kt2ts")
 }

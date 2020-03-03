@@ -6,7 +6,7 @@ import styles from "../Login/styles.module.scss"
 import RegisterForm from "../RegisterForm"
 import { urls } from "../../app/router/types"
 import { useApp } from "../../app"
-import { Registration } from "../../app/auth/types"
+import { Registration } from "../../kt2ts"
 
 const Register: React.FC = () => {
   const { state, actions } = useApp()

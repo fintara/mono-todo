@@ -1,5 +1,6 @@
-import { Api, Credentials, Registration } from "./types"
+import { Api } from "./types"
 import { HttpClient, KyHttpClient } from "../common/http"
+import { Credentials, Registration } from "../../kt2ts"
 
 
 export const api: Api = new class implements Api {

@@ -14,5 +14,6 @@ object Versions {
     object plugins {
         const val node = "2.2.1"
         const val shadowJar = "5.2.0"
+        const val kt2ts = "0.11.0"
     }
 }

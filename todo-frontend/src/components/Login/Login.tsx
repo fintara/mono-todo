@@ -5,7 +5,7 @@ import Container from "../../ui/Container"
 import { useApp } from "../../app"
 import LoginForm from "../LoginForm"
 import { urls } from "../../app/router/types"
-import { Credentials } from "../../app/auth/types"
+import { Credentials } from "../../kt2ts"
 
 const Login: React.FC = () => {
   const { state, actions } = useApp()
