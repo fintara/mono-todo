@@ -1,4 +1,4 @@
-import { AsyncAction, mutate, Operator } from "overmind"
+import { AsyncAction, filter, map, mutate, Operator, pipe } from "overmind"
 import { Show, TodoId } from "./types"
 
 export const setShow: Operator<Show> =
@@ -21,3 +21,9 @@ export const load: AsyncAction = async ({ state, actions, effects }) => {
 export const toggle: AsyncAction<TodoId> = async ({ state }, id) => {
   state.todos.items[id].done = !state.todos.items[id].done
 }
+
+export const add: Operator<string> = pipe(
+  map((_, value) => value.trim()),
+  filter((_, value) => value.length > 0),
+  mutate(({ state }, value) => state.todos.items[value] = { id: value, content: value, done: false })
+)

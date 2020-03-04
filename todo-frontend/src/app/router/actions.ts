@@ -1,4 +1,4 @@
-import { map, mutate, Operator, pipe, run } from "overmind"
+import { mutate, Operator, pipe } from "overmind"
 
 import * as o from "./operators"
 import * as authO from "../auth/operators"

@@ -21,7 +21,7 @@ touch "$FULLPATH/index.ts"
 
 cat > "$FULLPATH/$NAME.tsx" <<EOL
 import React from "react"
-import styles from "./styles.module.scss"
+//import styles from "./styles.module.scss"
 
 const ${NAME}: React.FC = () => {
   return (
