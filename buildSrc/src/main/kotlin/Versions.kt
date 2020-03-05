@@ -6,6 +6,8 @@ object Versions {
     const val exposed   = "0.21.1"
     const val slf4j     = "1.7.30"
     const val h2        = "1.4.200"
+    const val hikariCP  = "3.4.2"
+    const val jbcrypt   = "0.4"
 
     const val junit     = "5.6.0"
     const val assertj   = "3.15.0"

@@ -21,12 +21,16 @@ dependencies {
         http4k("core")
         http4k("server-jetty")
         http4k("format-jackson")
+        http4k("cloudnative")
 
         exposed("core")
         exposed("jdbc")
         exposed("java-time")
 
         h2()
+        hikariCP()
+
+        jbcrypt()
 
         logger()
     }
