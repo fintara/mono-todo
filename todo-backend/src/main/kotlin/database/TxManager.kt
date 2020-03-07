@@ -1,7 +1,9 @@
 package com.tsovedenski.todo.database
 
 import com.tsovedenski.todo.DatabaseConfig
+import com.tsovedenski.todo.database.repositories.ExposedTodoRepository
 import com.tsovedenski.todo.database.repositories.ExposedUserRepository
+import com.tsovedenski.todo.database.repositories.TodoRepository
 import com.tsovedenski.todo.database.repositories.UserRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -21,6 +23,7 @@ interface TxManager <out R> {
 
 interface TxProvider {
     val users: TxManager<UserRepository>
+    val todos: TxManager<TodoRepository>
 }
 
 class ExposedTxProvider (
@@ -28,7 +31,8 @@ class ExposedTxProvider (
     private val enableLogging: Boolean
 ) : TxProvider {
 
-    override val users: TxManager<UserRepository> = of(ExposedUserRepository)
+    override val users = of(ExposedUserRepository)
+    override val todos = of(ExposedTodoRepository)
 
     private fun <R> of(repository: R): TxManager<R> = object : TxManager<R> {
         override fun <T> tx(block: R.() -> T): T =
@@ -53,7 +57,8 @@ class ExposedTxProvider (
 
             transaction(database) {
                 SchemaUtils.create(
-                    Users
+                    Users,
+                    Todos
                 )
             }
 

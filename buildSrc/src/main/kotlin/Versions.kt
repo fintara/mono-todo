@@ -1,6 +1,6 @@
 object Versions {
     const val jvmTarget = "11"
-    const val kotlin    = "1.3.61"
+    const val kotlin    = "1.3.70"
 
     const val http4k    = "3.238.0"
     const val exposed   = "0.21.1"

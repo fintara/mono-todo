@@ -1,11 +1,9 @@
 package com.tsovedenski.todo
 
-import com.tsovedenski.todo.database.TxProvider
-import com.tsovedenski.todo.test.assertThat
+import com.tsovedenski.todo.test.TestApp
+import com.tsovedenski.todo.test.assertResponse
 import com.tsovedenski.todo.test.createTestApp
-import com.tsovedenski.todo.test.createTestTxProvider
 import org.assertj.core.api.Assertions.assertThat
-import org.http4k.core.HttpHandler
 import org.http4k.core.Method.*
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -17,19 +15,16 @@ import org.junit.jupiter.api.Test
  */
 class AuthenticationTests {
 
-    private val txProvider: TxProvider = createTestTxProvider()
-
-    lateinit var app: HttpHandler
+    lateinit var app: TestApp
 
     @BeforeEach
     fun setup() {
-        txProvider.users.tx { deleteAll() }
-        app = createTestApp(txProvider = txProvider)
+        app = createTestApp()
     }
 
     @Test
     fun `cannot log in with invalid credentials`() =
-        assertThat(login("test@gmail.com", "1234567890")) {
+        assertResponse(login("test@gmail.com", "1234567890")) {
             status.is4xx
         }
 
@@ -38,11 +33,11 @@ class AuthenticationTests {
         val email = "test@gmail.com"
         val password = "ver1s3cr3t"
 
-        assertThat(signup(email, password)) {
+        assertResponse(signup(email, password)) {
             status.is2xx
         }
 
-        assertThat(login(email, password)) {
+        assertResponse(login(email, password)) {
             status.is2xx
             json {
                 isObject.containsKey("token")
@@ -56,11 +51,11 @@ class AuthenticationTests {
         val email = "test@gmail.com"
         val password = "ver1s3cr3t"
 
-        assertThat(signup(email, password)) {
+        assertResponse(signup(email, password)) {
             status.is2xx
         }
 
-        val user = txProvider.users.tx { findByEmail(email) }
+        val user = app.txProvider.users.tx { findByEmail(email) }
 
         requireNotNull(user) { "user is null" }
 
@@ -72,11 +67,11 @@ class AuthenticationTests {
         val email = "john@gmail.com"
         val name = "John Doe"
 
-        assertThat(signup(email, "secret", name)) {
+        assertResponse(signup(email, "secret", name)) {
             status.is2xx
         }
 
-        val user = txProvider.users.tx { findByEmail(email) }
+        val user = app.txProvider.users.tx { findByEmail(email) }
 
         requireNotNull(user) { "user is null" }
 

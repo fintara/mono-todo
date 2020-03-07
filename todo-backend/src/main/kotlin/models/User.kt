@@ -9,7 +9,7 @@ import java.util.*
 
 typealias UserId = UUID
 
-data class User(
+data class User (
     val email: String,
     val password: String,
     val name: String?

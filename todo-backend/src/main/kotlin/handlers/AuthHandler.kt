@@ -2,11 +2,9 @@ package com.tsovedenski.todo.handlers
 
 import com.tsovedenski.todo.Authentication
 import com.tsovedenski.todo.Authenticator
-import com.tsovedenski.todo.PasswordEncoder
-import com.tsovedenski.todo.lens
+import com.tsovedenski.todo.bodyLens
 import com.tsovedenski.todo.models.Credentials
 import com.tsovedenski.todo.models.Registration
-import com.tsovedenski.todo.models.User
 import com.tsovedenski.todo.models.UserEntity
 import org.http4k.core.*
 
@@ -19,9 +17,9 @@ class AuthHandler (
     private val insertUser: (Registration) -> Unit
 ) {
     companion object {
-        private val credentialsLens = lens<Credentials>()
-        private val registrationLens = lens<Registration>()
-        private val tokenLens = lens<Token>()
+        private val credentialsLens = bodyLens<Credentials>()
+        private val registrationLens = bodyLens<Registration>()
+        private val tokenLens = bodyLens<Token>()
     }
 
     fun login(request: Request): Response {

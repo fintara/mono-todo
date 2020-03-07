@@ -1,10 +1,14 @@
 package com.tsovedenski.todo
 
+import java.time.Instant
+
 /**
  * Created by Tsvetan Ovedenski on 05/03/2020.
  */
 
 typealias Provider <T> = () -> T
+
+typealias InstantProvider = Provider<Instant>
 
 fun <A> id(): (A) -> A = { it }
 

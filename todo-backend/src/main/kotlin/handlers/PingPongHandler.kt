@@ -1,7 +1,7 @@
 package com.tsovedenski.todo.handlers
 
 import com.tsovedenski.todo.Provider
-import com.tsovedenski.todo.lens
+import com.tsovedenski.todo.bodyLens
 import org.http4k.core.*
 import java.time.Instant
 
@@ -16,5 +16,5 @@ class PingPongHandler (
         Response(Status.OK).with(pongLens of Pong(instantProvider().epochSecond))
 
     private data class Pong (val pong: Long)
-    private val pongLens = lens<Pong>()
+    private val pongLens = bodyLens<Pong>()
 }

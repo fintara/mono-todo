@@ -14,4 +14,4 @@ fun String.toUUID(): UUID? =
         null
     }
 
-inline fun <reified T : Any> lens() = Jackson.autoBody<T>().toLens()
+inline fun <reified T : Any> bodyLens() = Jackson.autoBody<T>().toLens()
