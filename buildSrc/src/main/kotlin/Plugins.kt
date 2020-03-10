@@ -10,7 +10,4 @@ object Plugins {
 
     fun PluginDependenciesSpec.shadowJar(): PluginDependencySpec =
         id("com.github.johnrengelman.shadow")
-
-    fun PluginDependenciesSpec.kt2ts(): PluginDependencySpec =
-        id("se.jensim.kt2ts")
 }

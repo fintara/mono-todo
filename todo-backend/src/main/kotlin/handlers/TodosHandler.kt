@@ -21,7 +21,7 @@ class TodosHandler (
     private val findTodos: (UserId) -> List<TodoEntity>,
     private val findTodo: (TodoId) -> TodoEntity?,
     private val createTodo: (TodoCreate, UserId) -> TodoEntity,
-    private val updateTodo: (TodoId, Todo) -> TodoEntity,
+    private val updateTodo: (TodoEntity, TodoPatch) -> TodoEntity,
     private val deleteTodo: (TodoId) -> Unit
 ) {
     companion object {
@@ -59,9 +59,8 @@ class TodosHandler (
         val id = idPath(request)
         val todo = findTodo(id) ?: throw EntityNotFoundException("Todo", id)
 
-        val body = patchLens(request)
-        val patched = body.patch(todo.payload)
-        val updated = updateTodo(todo.id, patched).toDTO()
+        val patch  = patchLens(request)
+        val updated = updateTodo(todo, patch).toDTO()
 
         return Response(Status.OK).with(lens of updated)
     }

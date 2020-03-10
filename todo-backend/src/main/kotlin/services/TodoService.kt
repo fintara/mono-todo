@@ -13,7 +13,7 @@ interface TodoService {
     fun findAll(userId: UserId): List<TodoEntity>
     fun findOne(todoId: TodoId): TodoEntity?
     fun create(item: TodoCreate, userId: UserId): TodoEntity
-    fun update(todoId: TodoId, todo: Todo): TodoEntity
+    fun update(todo: TodoEntity, patch: TodoPatch): TodoEntity
     fun delete(todoId: TodoId)
 }
 
@@ -36,9 +36,9 @@ class TodoServiceImpl (
         findById(id) ?: throw DatabaseException.CouldNotInsert
     }
 
-    override fun update(todoId: TodoId, todo: Todo): TodoEntity = tx {
-        save(todoId, todo)
-        findById(todoId) ?: throw DatabaseException.CouldNotUpdate
+    override fun update(todo: TodoEntity, patch: TodoPatch): TodoEntity = tx {
+        save(todo.id, todo.payload.apply(patch))
+        findById(todo.id) ?: throw DatabaseException.CouldNotUpdate
     }
 
     override fun delete(todoId: TodoId) = tx {

@@ -7,6 +7,7 @@ import com.tsovedenski.todo.models.TodoPatch
 import com.tsovedenski.todo.test.TestApp
 import com.tsovedenski.todo.test.assertResponse
 import com.tsovedenski.todo.test.createTestApp
+import com.tsovedenski.todo.test.todos
 import org.assertj.core.api.Assertions.assertThat
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.*
@@ -29,25 +30,25 @@ class TodoTests {
     }
 
     @Test
-    fun `listing all todos requires authentication`() = assertResponse(app.findAll()) {
+    fun `listing all todos requires authentication`() = assertResponse(app.todos.findAll()) {
         status.is4xx
     }
 
     @Test
-    fun `lists all todos by user`() = assertResponse(app.withAuth { findAll() }) {
+    fun `lists all todos by user`() = assertResponse(app.withAuth { todos.findAll() }) {
         status.is2xx
-        json {
-            isArray
-        }
+        json.isArray
     }
 
     @Test
     fun `patches by id`() {
         val auth = app.authenticate()
-        val todo = app.app.todoService.create(TodoCreate("test"), auth.userId)
+        val todo = app.txProvider.todos.tx {
+            insert(Todo(auth.userId, "test", false, app.instantProvider())).let(::findById)!!
+        }
         val patch = TodoPatch("edited todo", !todo.payload.done)
 
-        app.withAuth { patch(todo.id, patch) }
+        app.withAuth { todos.patch(todo.id, patch) }
 
         val updated = app.txProvider.todos.tx { findById(todo.id) }
 
@@ -62,26 +63,10 @@ class TodoTests {
         val auth = app.authenticate()
         val todoId = app.txProvider.todos.tx { insert(Todo(auth.userId, "test", true, app.instantProvider())) }
 
-        assertResponse(app.withAuth(auth) { delete(todoId) }) {
+        assertResponse(app.withAuth(auth) { todos.delete(todoId) }) {
             status.is2xx
         }
 
         assertThat(app.txProvider.todos.tx { findById(todoId) }).isNull()
-    }
-
-    private fun HttpHandler.findAll(): Response {
-        val request = Request(GET, "/todos")
-        return this(request)
-    }
-
-    private fun HttpHandler.patch(id: TodoId, patch: TodoPatch): Response {
-        val json = Jackson.asJsonString(patch)
-        val request = Request(PATCH, "/todos/$id").body(json)
-        return this(request)
-    }
-
-    private fun HttpHandler.delete(id: TodoId): Response {
-        val request = Request(DELETE, "/todos/$id")
-        return this(request)
     }
 }

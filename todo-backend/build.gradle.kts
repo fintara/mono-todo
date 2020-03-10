@@ -4,7 +4,6 @@ plugins {
 
     with (Plugins) {
         shadowJar()
-        kt2ts()
     }
 }
 
@@ -60,19 +59,5 @@ tasks {
         testLogging {
             events("passed", "skipped", "failed")
         }
-    }
-}
-
-kt2ts {
-    // Repeatable block for linking outputfile to a set of annotations
-    output {
-        outputFile = file("$buildDir/../../todo-frontend/src/kt2ts.d.ts")
-        annotations = listOf("com.tsovedenski.todo.annotations.Typescript")
-    }
-    classFilesSources {
-        // Two ways of setting classes dir, if both are set, both are jointly used
-        // One has to be provided (for task input resolution to work properly, I made it mandatory)
-        compileTasks = listOf(tasks.compileKotlin, tasks.compileJava)
-        classesDirs = files("$buildDir/classes/kotlin/main")
     }
 }

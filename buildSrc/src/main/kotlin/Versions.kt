@@ -9,13 +9,12 @@ object Versions {
     const val hikariCP  = "3.4.2"
     const val jbcrypt   = "0.4"
 
-    const val junit     = "5.6.0"
-    const val assertj   = "3.15.0"
+    const val junit       = "5.6.0"
+    const val assertj     = "3.15.0"
     const val assertjJson = "2.13.0"
 
     object plugins {
-        const val node = "2.2.1"
+        const val node      = "2.2.1"
         const val shadowJar = "5.2.0"
-        const val kt2ts = "0.11.0"
     }
 }

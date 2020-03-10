@@ -5,7 +5,6 @@ plugins {
     with (Plugins) {
         node() version Versions.plugins.node apply false
         shadowJar() version Versions.plugins.shadowJar apply false
-        kt2ts() version Versions.plugins.kt2ts apply false
     }
 }
 

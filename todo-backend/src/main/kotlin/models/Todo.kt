@@ -28,16 +28,7 @@ data class TodoDTO (
 data class TodoPatch (
     val content: String?,
     val done: Boolean?
-) {
-    fun patch (item: Todo): Todo {
-        var out = item.copy()
-
-        content?.let { out = out.copy(content = it) }
-        done?.let { out = out.copy(done = it) }
-
-        return out
-    }
-}
+)
 
 data class Todo (
     val userId: UserId,
@@ -45,6 +36,15 @@ data class Todo (
     val done: Boolean,
     val createdAt: Instant
 )
+
+fun Todo.apply(patch: TodoPatch): Todo {
+    var out = this.copy()
+
+    patch.content?.let { out = out.copy(content = it) }
+    patch.done?.let { out = out.copy(done = it) }
+
+    return out
+}
 
 typealias TodoEntity = Entity<TodoId, Todo>
 
