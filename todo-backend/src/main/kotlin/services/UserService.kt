@@ -33,7 +33,7 @@ class UserServiceImpl (
         val user = User(
             email = form.email,
             password = passwordEncoder.encode(form.password),
-            name = form.name
+            name = form.name?.takeIf { it.isNotBlank() }
         )
         return tx { insert(user) }
     }

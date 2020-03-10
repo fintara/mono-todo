@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { Button } from "@blueprintjs/core"
 import styles from "./styles.module.scss"
 import Input from "../../ui/Input"
-import { Registration } from "../../kt2ts"
+import { Registration } from "../../app/auth/types"
 
 type Props = {
   isLoading: boolean

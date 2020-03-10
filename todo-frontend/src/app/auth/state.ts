@@ -1,9 +1,11 @@
 import { statemachine, Statemachine } from "overmind"
+import { User } from "./types"
 
 type State = {
   mode: Statemachine<"anonymous" | "authenticating" | "registering" | "registered" | "authenticated" | "error">
   token: string | null
   error: string | null
+  user: User | null
 }
 
 export const state: State = {
@@ -23,4 +25,5 @@ export const state: State = {
   }),
   token: null,
   error: null,
+  user: null,
 }

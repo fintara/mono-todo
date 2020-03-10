@@ -1,12 +1,11 @@
 import React, { useCallback } from "react"
 import { Callout, Card, Divider, H2 } from "@blueprintjs/core"
-// import styles from "./styles.module.scss"
+import styles from "./styles.module.scss"
 import Container from "../../ui/Container"
-import styles from "../Login/styles.module.scss"
 import RegisterForm from "../RegisterForm"
 import { urls } from "../../app/router/types"
 import { useApp } from "../../app"
-import { Registration } from "../../kt2ts"
+import { Registration } from "../../app/auth/types"
 
 const Register: React.FC = () => {
   const { state, actions } = useApp()
@@ -16,7 +15,7 @@ const Register: React.FC = () => {
   }, [actions.auth])
 
   return (
-    <Container size="small">
+    <Container size="small" className={styles.container}>
       <Card elevation={3}>
         <H2>Sign up</H2>
 

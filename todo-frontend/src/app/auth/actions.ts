@@ -1,6 +1,6 @@
-import { AsyncAction } from "overmind"
-import { Credentials, Registration } from "../../kt2ts"
+import { Action, AsyncAction } from "overmind"
 import { urls } from "../router/types"
+import { Credentials, Registration } from "./types"
 
 export const login: AsyncAction<Credentials> = async ({ state, actions, effects }, credentials) => {
   console.log(credentials)
@@ -22,6 +22,23 @@ export const login: AsyncAction<Credentials> = async ({ state, actions, effects 
   })
 }
 
+export const loginFromToken: Action<string> = ({ state, actions }, token) => {
+  return state.auth.mode.authenticating(() => {
+    return state.auth.mode.authenticated(() => {
+      state.auth.token = token
+      actions.router.redirect(urls.todos)
+    })
+  })
+}
+
+export const logout: Action = ({ state, actions }) => {
+  return state.auth.mode.anonymous(() => {
+    state.auth.token = null
+    state.auth.user = null
+    actions.router.redirect(urls.root)
+  })
+}
+
 export const register: AsyncAction<Registration> = async ({ state, actions, effects }, form) => {
   return state.auth.mode.registering(async () => {
     state.auth.error = null
@@ -38,4 +55,12 @@ export const register: AsyncAction<Registration> = async ({ state, actions, effe
       })
     }
   })
+}
+
+export const loadUser: AsyncAction = async ({ state, effects }) => {
+  try {
+    state.auth.user = await effects.auth.api.me()
+  } catch (e) {
+    state.auth.token = null
+  }
 }

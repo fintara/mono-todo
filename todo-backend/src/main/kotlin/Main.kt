@@ -6,6 +6,7 @@ import com.tsovedenski.todo.exceptions.EntityNotFoundException
 import com.tsovedenski.todo.handlers.AuthHandler
 import com.tsovedenski.todo.handlers.PingPongHandler
 import com.tsovedenski.todo.handlers.TodosHandler
+import com.tsovedenski.todo.handlers.UsersHandler
 import com.tsovedenski.todo.services.TodoService
 import com.tsovedenski.todo.services.TodoServiceImpl
 import com.tsovedenski.todo.services.UserService
@@ -60,6 +61,11 @@ class App(
             userService::create.asUnit() // https://youtrack.jetbrains.com/issue/KT-11723
         )
 
+        val usersHandler = UsersHandler(
+            credentials,
+            userService::findById
+        )
+
         val todosHandler = TodosHandler(
             credentials,
             todoService::findAll,
@@ -76,6 +82,10 @@ class App(
                 "/login"  bind POST to authHandler::login,
                 "/signup" bind POST to authHandler::signup
             ),
+
+            "/users" bind authenticated.then(routes(
+                "/me" bind GET to usersHandler::me
+            )),
 
             "/todos" bind authenticated.then(routes(
                 "/"     bind GET to todosHandler::findAll,

@@ -1,7 +1,7 @@
 import React from "react"
 import { render, act, fireEvent, queryByAttribute } from "@testing-library/react"
 import LoginForm from "./LoginForm"
-import { Credentials } from "../../kt2ts"
+import { Credentials } from "../../app/auth/types"
 
 const queryById = queryByAttribute.bind(null, "id")
 

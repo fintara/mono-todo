@@ -1,6 +1,5 @@
-import { Api, Authentication } from "./types"
+import { Api, Authentication, Credentials, Registration, User } from "./types"
 import { HttpClient, KyHttpClient } from "../common/http"
-import { Credentials, Registration } from "../../kt2ts"
 
 
 export const api: Api = new class implements Api {
@@ -12,5 +11,13 @@ export const api: Api = new class implements Api {
 
   register(form: Registration): Promise<void> {
     return this.http.post("/auth/signup", form)
+  }
+
+  me(): Promise<User> {
+    return this.http.get("/users/me")
+  }
+
+  authenticate(token: string | null): void {
+    this.http.authenticate(token)
   }
 }()

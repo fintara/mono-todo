@@ -7,6 +7,7 @@ import Login from "../Login"
 import Register from "../Register"
 import Todos from "../Todos"
 import Error404 from "../Error404"
+import AppHeader from "../AppHeader"
 
 const pagesDictionary: { [page in Page]: React.FC } = {
   "home": Home,
@@ -23,6 +24,7 @@ const App: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <AppHeader />
       <PageComponent />
     </div>
   )

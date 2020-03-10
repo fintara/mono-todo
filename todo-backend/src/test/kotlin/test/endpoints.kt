@@ -35,6 +35,16 @@ class Auth (private val handler: HttpHandler) : HttpHandler by handler {
 val HttpHandler.auth get() = Auth(this)
 
 
+class Users (private val handler: HttpHandler) : HttpHandler by handler {
+    fun me(): Response {
+        val request = Request(GET, "/users/me")
+        return this(request)
+    }
+}
+
+val HttpHandler.users get() = Users(this)
+
+
 class Todos (private val handler: HttpHandler) : HttpHandler by handler {
     fun findAll(): Response {
         val request = Request(GET, "/todos")

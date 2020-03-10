@@ -8,8 +8,7 @@ const keys = {
 const onInitialize: OnInitialize = async ({ state, actions, effects }, instance) => {
   const token = localStorage.getItem(keys.authentication)
   if (token) {
-    state.auth.token = token
-    effects.todos.api.authenticate(token)
+    actions.auth.loginFromToken(token)
     if (state.router.page !== "todos") {
       actions.router.redirect(urls.todos)
     }
@@ -19,10 +18,13 @@ const onInitialize: OnInitialize = async ({ state, actions, effects }, instance)
     (state) => state.auth.token,
     (value) => {
       effects.todos.api.authenticate(value)
+      effects.auth.api.authenticate(value)
       if (value) {
         localStorage.setItem(keys.authentication, value)
+        actions.auth.loadUser()
       } else {
         localStorage.removeItem(keys.authentication)
+        actions.router.redirect(urls.login)
       }
     }
   )

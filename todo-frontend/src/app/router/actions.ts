@@ -19,6 +19,7 @@ export const showRegister: Operator = pipe(
 )
 
 export const showTodos: Operator = pipe(
+  authO.checkAuth(),
   o.setPage("todos"),
   mutate(todosA.load),
 )

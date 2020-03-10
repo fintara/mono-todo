@@ -5,7 +5,7 @@ import Container from "../../ui/Container"
 import { useApp } from "../../app"
 import LoginForm from "../LoginForm"
 import { urls } from "../../app/router/types"
-import { Credentials } from "../../kt2ts"
+import { Credentials } from "../../app/auth/types"
 
 const Login: React.FC = () => {
   const { state, actions } = useApp()
@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   }, [actions.auth])
 
   return (
-    <Container size="small">
+    <Container size="small" className={styles.container}>
       <Card elevation={3}>
         <H2>Log in</H2>
 

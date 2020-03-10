@@ -10,7 +10,7 @@ const Todos: React.FC = () => {
   const { state, actions } = useApp()
 
   return (
-    <Container size="normal">
+    <Container size="normal" className={styles.container}>
       <Card elevation={3}>
 
         <div className={styles.input}>

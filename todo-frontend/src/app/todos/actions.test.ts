@@ -1,14 +1,51 @@
 import { createOvermindMock } from "overmind"
 import { config } from "../index"
-import { Todo } from "./types"
+import { Api, Todo, TodoCreate } from "./types"
+
+const todos = [
+  { id: "aaaaa", content: "Abc", done: false },
+  { id: "bbbbb", content: "Def", done: false },
+  { id: "ccccc", content: "Xyz", done: false },
+  { id: "ddddd", content: "Qwe", done: true },
+  { id: "eeeee", content: "Uvw", done: false },
+]
+
+const dummyApi: Api = new class implements Api {
+  authenticate(token: string | null): void {
+  }
+
+  create(todo: TodoCreate): Promise<Todo> {
+    return Promise.resolve({ id: new Date().toUTCString(), done: false, ...todo })
+  }
+
+  delete(id: string): Promise<void> {
+    return Promise.resolve()
+  }
+
+  getAll(): Promise<Todo[]> {
+    return Promise.resolve(todos)
+  }
+
+  update(id: string, patch: Partial<Omit<Todo, "id">>): Promise<Todo> {
+    const todo = todos.find(it => it.id === id)
+    if (!todo) {
+      return Promise.reject()
+    }
+    return Promise.resolve({...todo, ...patch})
+  }
+}()
 
 describe("todos::actions", () => {
   describe("add", () => {
-    it("should add value", () => {
-      const overmind = createOvermindMock(config)
+    it("should add value", async () => {
+      const overmind = createOvermindMock(config, {
+        todos: {
+          api: dummyApi
+        }
+      })
       const content = "Test #123"
 
-      overmind.actions.todos.add(content)
+      await overmind.actions.todos.add(content)
       expect(overmind.state.todos.list.find(it => it.content === content)).toBeTruthy()
     })
     it("should filter out blank values", () => {
@@ -22,18 +59,9 @@ describe("todos::actions", () => {
 
   describe("load", () => {
     it("should load", async () => {
-      const todos: Todo[] = [
-        { id: "aaa", content: "First", done: true },
-        { id: "bbb", content: "Second", done: false },
-        { id: "ccc", content: "Third", done: false },
-      ]
       const overmind = createOvermindMock(config, {
         todos: {
-          api: {
-            getTodos(): Promise<Todo[]> {
-              return Promise.resolve(todos)
-            }
-          }
+          api: dummyApi
         }
       })
 
@@ -52,14 +80,10 @@ describe("todos::actions", () => {
 
 function toggleTest(initial: boolean, expected: boolean) {
   return async () => {
-    const id = "xyz"
+    const id = todos[3].id
     const overmind = createOvermindMock(config, {
       todos: {
-        api: {
-          getTodos(): Promise<Todo[]> {
-            return Promise.resolve([{ id, content: "test", done: initial }])
-          }
-        }
+        api: dummyApi
       }
     })
 

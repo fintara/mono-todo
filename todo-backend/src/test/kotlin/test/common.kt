@@ -11,30 +11,36 @@ import kotlin.random.Random
 /**
  * Created by Tsvetan Ovedenski on 05/03/2020.
  */
-class TestApp(val app: App): HttpHandler by app {
+class TestApp(private val app: App): HttpHandler by app {
     val txProvider get() = app.txProvider
     val instantProvider get() = app.instantProvider
 
-    fun authenticate(email: String = "test@example.com"): Authentication {
+    fun authenticate(
+        email: String = "test@example.com",
+        password: String = Random.Default.nextBytes(32).toString(),
+        name: String? = null
+    ): Authentication {
         val user = txProvider.users.tx {
             findByEmail(email) ?: run {
-                val user = User(email, Random.Default.nextBytes(32).toString(), null)
+                val user = User(email, password, name)
                 insert(user).let(::findById)!!
             }
         }
         return Authentication(user.id)
     }
 
-    fun withAuth(email: String = "test@example.com", block: HttpHandler.() -> Response) =
-        withAuth(authenticate(email), block)
+    fun withAuth(
+        email: String = "test@example.com",
+        password: String = Random.Default.nextBytes(32).toString(),
+        name: String? = null,
+        block: HttpHandler.() -> Response
+    ) =
+        withAuth(authenticate(email, password, name), block)
 
     fun withAuth(authentication: Authentication, block: HttpHandler.() -> Response) =
         with (applyAuthentication(authentication), block)
 
-    fun applyAuthentication(email: String = "test@example.com"): HttpHandler =
-        (::authenticate andThen ::applyAuthentication)(email)
-
-    fun applyAuthentication(authentication: Authentication): HttpHandler {
+    private fun applyAuthentication(authentication: Authentication): HttpHandler {
         val token = app.authenticator.token(authentication)
         return Filter { next ->
             { req -> next(req.header("Authorization", "Bearer $token")) }
