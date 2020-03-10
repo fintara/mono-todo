@@ -5,13 +5,16 @@ type Options = {
   json?: any
 }
 
-export interface HttpClient {
+export interface WithAuthentication {
+  authenticate(token: string | null): void
+}
+
+export interface HttpClient extends WithAuthentication {
   get<T>(url: string): Promise<T>
   post<T, R>(url: string, body?: T): Promise<R>
   put<T, R>(url: string, body: T): Promise<R>
+  patch<T, R>(url: string, body: T): Promise<R>
   delete<T>(url: string): Promise<T>
-
-  authenticate(token: string | null): void
 }
 
 export class KyHttpClient implements HttpClient {
@@ -41,10 +44,16 @@ export class KyHttpClient implements HttpClient {
     const options: Options = {
       headers: this.headers
     }
-    if (body) {
-      options.json = body
-    }
+    options.json = body
     return ky.put(`${this.baseUrl}${url}`, options).json()
+  }
+
+  public patch<T, R>(url: string, body: T): Promise<R> {
+    const options: Options = {
+      headers: this.headers
+    }
+    options.json = body
+    return ky.patch(`${this.baseUrl}${url}`, options).json()
   }
 
   public delete<T>(url: string): Promise<T> {

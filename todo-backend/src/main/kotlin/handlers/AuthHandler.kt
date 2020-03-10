@@ -32,7 +32,7 @@ class AuthHandler (
         // TODO: fields validation
         val body = registrationLens(request)
         insertUser(body)
-        return Response(Status.CREATED)
+        return Response(Status.NO_CONTENT)
     }
 
     private fun goodCredentials(user: UserEntity) =

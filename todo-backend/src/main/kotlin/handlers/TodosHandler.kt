@@ -68,6 +68,6 @@ class TodosHandler (
     fun delete(request: Request): Response {
         deleteById(request)
 
-        return Response(Status.OK)
+        return Response(Status.NO_CONTENT)
     }
 }
