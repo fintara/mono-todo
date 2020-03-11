@@ -1,9 +1,16 @@
-import { Api, Authentication, Credentials, Registration, User } from "./types"
+import { Authentication, Credentials, Registration, User } from "./types"
 import { HttpClient, KyHttpClient } from "../common/http"
+import { ApiInitialize } from "../common/types"
 
 
-export const api: Api = new class implements Api {
-  private http: HttpClient = new KyHttpClient(process.env.REACT_APP_API_URL)
+export const api = new class {
+  private http: HttpClient = undefined as unknown as HttpClient
+  private getToken: () => string = undefined as unknown as () => string
+
+  initialize(config: ApiInitialize) {
+    this.getToken = config.getToken
+    this.http = new KyHttpClient(config.baseUrl)
+  }
 
   login(credentials: Credentials): Promise<Authentication> {
     return this.http.post("/auth/login", credentials)
@@ -14,10 +21,7 @@ export const api: Api = new class implements Api {
   }
 
   me(): Promise<User> {
-    return this.http.get("/users/me")
+    return this.http.get("/users/me", { token: this.getToken() })
   }
 
-  authenticate(token: string | null): void {
-    this.http.authenticate(token)
-  }
 }()

@@ -3,7 +3,6 @@ import { urls } from "../router/types"
 import { Credentials, Registration } from "./types"
 
 export const login: AsyncAction<Credentials> = async ({ state, actions, effects }, credentials) => {
-  console.log(credentials)
   return state.auth.mode.authenticating(async () => {
     state.auth.error = null
 
@@ -11,6 +10,7 @@ export const login: AsyncAction<Credentials> = async ({ state, actions, effects 
       const { token } = await effects.auth.api.login(credentials)
       return state.auth.mode.authenticated(() => {
         state.auth.token = token
+        actions.auth.loadUser()
         actions.router.redirect(urls.todos)
       })
     } catch (e) {
@@ -26,6 +26,7 @@ export const loginFromToken: Action<string> = ({ state, actions }, token) => {
   return state.auth.mode.authenticating(() => {
     return state.auth.mode.authenticated(() => {
       state.auth.token = token
+      actions.auth.loadUser()
       actions.router.redirect(urls.todos)
     })
   })
@@ -57,10 +58,11 @@ export const register: AsyncAction<Registration> = async ({ state, actions, effe
   })
 }
 
-export const loadUser: AsyncAction = async ({ state, effects }) => {
+export const loadUser: AsyncAction = async ({ state, actions, effects }) => {
   try {
     state.auth.user = await effects.auth.api.me()
   } catch (e) {
+    console.error(e)
     state.auth.token = null
   }
 }

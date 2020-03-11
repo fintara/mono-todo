@@ -1,26 +1,29 @@
-import { Api, Todo, TodoCreate, TodoId } from "./types"
+import { Todo, TodoCreate, TodoId } from "./types"
 import { HttpClient, KyHttpClient } from "../common/http"
+import { ApiInitialize } from "../common/types"
 
-export const api: Api = new class implements Api {
-  private http: HttpClient = new KyHttpClient(process.env.REACT_APP_API_URL)
+export const api = new class {
+  private http: HttpClient = undefined as unknown as HttpClient
+  private getToken: () => string = undefined as unknown as () => string
+
+  initialize(config: ApiInitialize) {
+    this.getToken = config.getToken
+    this.http = new KyHttpClient(config.baseUrl)
+  }
 
   getAll(): Promise<Todo[]> {
-    return this.http.get("/todos")
+    return this.http.get("/todos", { token: this.getToken() })
   }
 
   create(todo: TodoCreate): Promise<Todo> {
-    return this.http.post("/todos", todo)
+    return this.http.post("/todos", todo, { token: this.getToken() })
   }
 
   update(id: TodoId, patch: Partial<Omit<Todo, "id">>): Promise<Todo> {
-    return this.http.patch(`/todos/${id}`, patch)
+    return this.http.patch(`/todos/${id}`, patch, { token: this.getToken() })
   }
 
   delete(id: TodoId): Promise<void> {
-    return this.http.delete(`/todos/${id}`)
-  }
-
-  authenticate(token: string | null): void {
-    this.http.authenticate(token)
+    return this.http.delete(`/todos/${id}`, { token: this.getToken() })
   }
 }()
