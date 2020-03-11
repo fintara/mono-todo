@@ -26,6 +26,18 @@ export const toggle: AsyncAction<TodoId> = async ({ state, effects }, id) => {
   await effects.todos.api.update(id, { done: item.done })
 }
 
+export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state, effects }, { id, content: _content }) => {
+  const item = state.todos.items[id]
+  const content = _content.trim()
+
+  if (!item || !content || item.content === content) {
+    return
+  }
+
+  item.content = content
+  await effects.todos.api.update(id, { content })
+}
+
 export const add: Operator<string> = pipe(
   map((_, value) => value.trim()),
   filter((_, value) => value.length > 0),

@@ -8,15 +8,24 @@
     opacity         : 0.667;
   }
 
-  .content {
-    flex-grow  : 1;
-    text-align : left;
-    font-size: 1.25em;
+  span.content {
+    margin-top : 1px;
+  }
 
+  .content {
+    font-size     : 1.25em;
+    padding-right : 0.25rem;
+    padding-left  : 0.25rem;
+    text-align    : left;
   }
 
   .checkboxWrapper {
-    line-height: 22.5px;
+    line-height : 24px;
+
+    label {
+      margin-right : 0.5rem;
+    }
+
     .checkbox {
       margin-bottom : 0 !important;
     }

@@ -1,23 +1,15 @@
-import React, { useCallback } from "react"
+import React from "react"
 import styles from "./styles.module.scss"
 import Container from "../../ui/Container"
 import { useApp } from "../../app"
 import { User } from "../../app/auth/types"
 import { Button } from "@blueprintjs/core"
 
-const UserInformation: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLogout }) => {
-  const callback =  useCallback((e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onLogout()
-  }, [onLogout])
-
-  return <div>
-    <span>Hello, {user.name}!</span>
-    {' '}
-    <a href="#" onClick={callback}>Log out</a>
+const UserInformation: React.FC<{ user: User, onLogout: () => void }> = ({ user, onLogout }) =>
+  <div>
+    <span className={styles.text}>Hello, {user.name}!</span>
+    <Button small={true} onClick={onLogout} rightIcon="log-out">Log out</Button>
   </div>
-}
 
 const AppHeader: React.FC = () => {
   const { state, actions } = useApp()

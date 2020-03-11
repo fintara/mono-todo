@@ -22,6 +22,7 @@ const Todos: React.FC = () => {
         <TodosList
           items={state.todos.list}
           onToggle={actions.todos.toggle}
+          onEdit={((id, content) => actions.todos.edit({ id, content }))}
         />
 
       </Card>

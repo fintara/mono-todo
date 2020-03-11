@@ -6,7 +6,7 @@ import { urls } from "../../app/router/types"
 
 const Home: React.FC = () => {
   return (
-    <Container>
+    <Container className={styles.container}>
       <Card
         elevation={3}
       >
