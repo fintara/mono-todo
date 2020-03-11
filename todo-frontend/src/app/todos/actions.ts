@@ -1,4 +1,4 @@
-import { AsyncAction, filter, map, mutate, Operator, pipe } from "overmind"
+import { Action, AsyncAction, filter, map, mutate, Operator, pipe } from "overmind"
 import { Show, TodoId } from "./types"
 import { toMap } from "../common/utils"
 
@@ -44,3 +44,8 @@ export const add: Operator<string> = pipe(
   map(async ({ effects }, content) => effects.todos.api.create({ content })),
   mutate(({ state }, todo) => state.todos.items[todo.id] = todo)
 )
+
+export const reset: Action = ({ state }) => {
+  state.todos.items = {}
+  state.todos.show = "all"
+}

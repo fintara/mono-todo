@@ -54,6 +54,7 @@ const RegisterForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
   />
 
   const Submit = <Button
+    id="submit"
     type="submit"
     intent="success"
     disabled={isLoading}

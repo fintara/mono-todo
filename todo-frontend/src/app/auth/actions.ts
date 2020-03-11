@@ -36,6 +36,7 @@ export const logout: Action = ({ state, actions }) => {
   return state.auth.mode.anonymous(() => {
     state.auth.token = null
     state.auth.user = null
+    actions.todos.reset()
     actions.router.redirect(urls.root)
   })
 }
@@ -63,6 +64,6 @@ export const loadUser: AsyncAction = async ({ state, actions, effects }) => {
     state.auth.user = await effects.auth.api.me()
   } catch (e) {
     console.error(e)
-    state.auth.token = null
+    actions.auth.logout()
   }
 }

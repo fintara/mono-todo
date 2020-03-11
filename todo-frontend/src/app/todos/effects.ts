@@ -1,4 +1,4 @@
-import { Todo, TodoCreate, TodoId } from "./types"
+import { Todo, TodoCreate, TodoId, TodoPatch } from "./types"
 import { HttpClient, KyHttpClient } from "../common/http"
 import { ApiInitialize } from "../common/types"
 
@@ -19,7 +19,7 @@ export const api = new class {
     return this.http.post("/todos", todo, { token: this.getToken() })
   }
 
-  update(id: TodoId, patch: Partial<Omit<Todo, "id">>): Promise<Todo> {
+  update(id: TodoId, patch: TodoPatch): Promise<Todo> {
     return this.http.patch(`/todos/${id}`, patch, { token: this.getToken() })
   }
 

@@ -1,4 +1,4 @@
-import { mutate, Operator, pipe, run } from "overmind"
+import { filter, mutate, Operator, pipe, run } from "overmind"
 
 import * as o from "./operators"
 import * as authO from "../auth/operators"
@@ -18,14 +18,14 @@ export const showRegister: Operator = pipe(
   authO.resetMode(),
 )
 
-export const showTodos: Operator = pipe(
-  authO.checkAuth(),
+export const showTodos: Operator = authO.authenticated(pipe(
   o.setPage("todos"),
   mutate(todosA.load),
-)
+))
 
 export const showNotFound: Operator = pipe(
   o.setPage("error_404"),
 )
 
-export const redirect: Operator<string> = run(({ effects }, url) => effects.router.instance.redirect(url))
+export const redirect: Operator<string> =
+  run(({ effects }, url) => effects.router.instance.redirect(url))

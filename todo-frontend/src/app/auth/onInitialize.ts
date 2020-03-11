@@ -1,5 +1,4 @@
 import { OnInitialize } from "overmind"
-import { urls } from "../router/types"
 
 const keys = {
   authentication: "token"
@@ -17,9 +16,6 @@ const onInitialize: OnInitialize = async ({ state, actions, effects }, instance)
   const token = localStorage.getItem(keys.authentication)
   if (token) {
     actions.auth.loginFromToken(token)
-    if (state.router.page !== "todos") {
-      actions.router.redirect(urls.todos)
-    }
   }
 
   instance.reaction(

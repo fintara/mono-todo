@@ -8,6 +8,8 @@ export interface Todo {
   done: boolean
 }
 
+export type TodoPatch = Partial<Omit<Todo, "id">>
+
 export interface TodoCreate {
   content: string
 }
