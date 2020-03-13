@@ -44,7 +44,7 @@ class TodoTests {
     fun `patches by id`() {
         val auth = app.authenticate()
         val todo = app.txProvider.todos.tx {
-            insert(Todo(auth.userId, "test", false, app.instantProvider())).let(::findById)!!
+            insert(Todo(auth.userId, "test", null, app.instantProvider())).let(::findById)!!
         }
         val patch = TodoPatch("edited todo", !todo.payload.done)
 
@@ -61,7 +61,7 @@ class TodoTests {
     @Test
     fun `deletes by id`() {
         val auth = app.authenticate()
-        val todoId = app.txProvider.todos.tx { insert(Todo(auth.userId, "test", true, app.instantProvider())) }
+        val todoId = app.txProvider.todos.tx { insert(Todo(auth.userId, "test", app.instantProvider(), app.instantProvider())) }
 
         assertResponse(app.withAuth(auth) { todos.delete(todoId) }) {
             status.is2xx

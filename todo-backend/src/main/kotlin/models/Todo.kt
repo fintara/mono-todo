@@ -1,5 +1,6 @@
 package com.tsovedenski.todo.models
 
+import com.tsovedenski.todo.InstantProvider
 import com.tsovedenski.todo.annotations.Typescript
 import com.tsovedenski.todo.database.Entity
 import java.time.Instant
@@ -33,15 +34,17 @@ data class TodoPatch (
 data class Todo (
     val userId: UserId,
     val content: String,
-    val done: Boolean,
+    val doneAt: Instant?,
     val createdAt: Instant
-)
+) {
+    val done get() = doneAt != null
+}
 
-fun Todo.apply(patch: TodoPatch): Todo {
+fun Todo.apply(patch: TodoPatch, now: InstantProvider): Todo {
     var out = this.copy()
 
     patch.content?.let { out = out.copy(content = it) }
-    patch.done?.let { out = out.copy(done = it) }
+    patch.done?.let { out = out.copy(doneAt = if (it) now() else null) }
 
     return out
 }

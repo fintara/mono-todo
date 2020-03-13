@@ -18,7 +18,7 @@ interface TodoService {
 }
 
 class TodoServiceImpl (
-    private val instantProvider: InstantProvider,
+    private val now: InstantProvider,
     private val tx: TxManager<TodoRepository>
 ) : TodoService {
 
@@ -31,13 +31,13 @@ class TodoServiceImpl (
     }
 
     override fun create(item: TodoCreate, userId: UserId): TodoEntity = tx {
-        val todo = Todo(userId, item.content, false, instantProvider())
+        val todo = Todo(userId, item.content, null, now())
         val id = insert(todo)
         findById(id) ?: throw DatabaseException.CouldNotInsert
     }
 
     override fun update(todo: TodoEntity, patch: TodoPatch): TodoEntity = tx {
-        save(todo.id, todo.payload.apply(patch))
+        save(todo.id, todo.payload.apply(patch, now))
         findById(todo.id) ?: throw DatabaseException.CouldNotUpdate
     }
 
