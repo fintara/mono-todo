@@ -2,6 +2,7 @@ package com.tsovedenski.todo.handlers
 
 import com.tsovedenski.todo.Authentication
 import com.tsovedenski.todo.Authenticator
+import com.tsovedenski.todo.body
 import com.tsovedenski.todo.bodyLens
 import com.tsovedenski.todo.models.Credentials
 import com.tsovedenski.todo.models.Registration
@@ -19,7 +20,6 @@ class AuthHandler (
     companion object {
         private val credentialsLens = bodyLens<Credentials>()
         private val registrationLens = bodyLens<Registration>()
-        private val tokenLens = bodyLens<Token>()
     }
 
     fun login(request: Request): Response {
@@ -36,7 +36,7 @@ class AuthHandler (
     }
 
     private fun goodCredentials(user: UserEntity) =
-        Response(Status.OK).with(tokenLens of Token(authenticator.token(Authentication(user.id))))
+        Response(Status.OK).body(Token(authenticator.token(Authentication(user.id))))
 
     private fun badCredentials() =
         Response(Status.UNAUTHORIZED)

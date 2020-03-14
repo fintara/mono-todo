@@ -1,5 +1,6 @@
 plugins {
     application
+    jacoco
     kotlin("jvm")
 
     with (Plugins) {
@@ -61,3 +62,10 @@ tasks {
         }
     }
 }
+
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/jacoco")
+}
+
+

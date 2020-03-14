@@ -1,6 +1,7 @@
 package com.tsovedenski.todo.handlers
 
 import com.tsovedenski.todo.Provider
+import com.tsovedenski.todo.body
 import com.tsovedenski.todo.bodyLens
 import org.http4k.core.*
 import java.time.Instant
@@ -13,8 +14,7 @@ class PingPongHandler (
 ) : HttpHandler {
 
     override fun invoke(request: Request): Response =
-        Response(Status.OK).with(pongLens of Pong(instantProvider().epochSecond))
+        Response(Status.OK).body(Pong(instantProvider().epochSecond))
 
     private data class Pong (val pong: Long)
-    private val pongLens = bodyLens<Pong>()
 }
