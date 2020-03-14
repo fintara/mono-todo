@@ -16,7 +16,7 @@ class UserTests {
 
     @BeforeEach
     fun setup() {
-        app = createTestApp()
+        app = createTestApp().apply { resetDatabase() }
     }
 
     @Test

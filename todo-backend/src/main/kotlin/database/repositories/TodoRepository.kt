@@ -29,6 +29,7 @@ object ExposedTodoRepository : TodoRepository {
     override fun insert(item: Todo): TodoId = Todos.insertAndGetId {
         it[userId] = EntityID(item.userId, Users)
         it[content] = item.content
+        it[deadline] = item.deadline
         it[doneAt] = item.doneAt
         it[createdAt] = item.createdAt
     }.value
@@ -36,6 +37,7 @@ object ExposedTodoRepository : TodoRepository {
     override fun save(id: TodoId, item: Todo) {
         Todos.update({ Todos.id eq id }) {
             it[content] = item.content
+            it[deadline] = item.deadline
             it[doneAt] = item.doneAt
         }
     }
@@ -54,6 +56,7 @@ fun ResultRow.toTodo() = TodoEntity(
     payload = Todo(
         userId = this[Todos.userId].value,
         content = this[Todos.content],
+        deadline = this[Todos.deadline],
         doneAt = this[Todos.doneAt],
         createdAt = this[Todos.createdAt]
     )

@@ -15,6 +15,11 @@ class TestApp(private val app: App): HttpHandler by app {
     val txProvider get() = app.txProvider
     val instantProvider get() = app.instantProvider
 
+    fun resetDatabase() = with (txProvider) {
+        todos.tx { deleteAll() }
+        users.tx { deleteAll() }
+    }
+
     fun authenticate(
         email: String = "test@example.com",
         password: String = Random.Default.nextBytes(32).toString(),
@@ -58,12 +63,7 @@ fun createTestApp(
         txProvider = txProvider,
         instantProvider = instantProvider
     )
-).also {
-    with (txProvider) {
-        todos.tx { deleteAll() }
-        users.tx { deleteAll() }
-    }
-}
+)
 
 fun createTestTxProvider(): TxProvider {
     // since we are using H2, we can directly use that

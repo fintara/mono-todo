@@ -16,6 +16,7 @@ object Users : UUIDTable("users") {
 object Todos : UUIDTable("todos") {
     val userId = reference("user_id", Users)
     val content = text("content")
+    val deadline = timestamp("deadline").nullable()
     val doneAt = timestamp("done_at").nullable()
     val createdAt = timestamp("created_at")
 }
