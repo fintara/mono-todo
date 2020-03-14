@@ -2,16 +2,16 @@ import { createOvermindMock } from "overmind"
 import { config } from "../index"
 import { Todo, TodoCreate, TodoPatch } from "./types"
 
-const todos = [
-  { id: "aaaaa", content: "Abc", done: false },
-  { id: "bbbbb", content: "Def", done: false },
-  { id: "ccccc", content: "Xyz", done: false },
-  { id: "ddddd", content: "Qwe", done: true },
-  { id: "eeeee", content: "Uvw", done: false },
+const todos: Todo[] = [
+  { id: "aaaaa", content: "Abc", done: false , deadline: null, createdAt: new Date() },
+  { id: "bbbbb", content: "Def", done: false , deadline: null, createdAt: new Date() },
+  { id: "ccccc", content: "Xyz", done: false , deadline: null, createdAt: new Date() },
+  { id: "ddddd", content: "Qwe", done: true , deadline: null, createdAt: new Date() },
+  { id: "eeeee", content: "Uvw", done: false , deadline: null, createdAt: new Date() },
 ]
 
 const create = (todo: TodoCreate): Promise<Todo> =>
-  Promise.resolve({ id: new Date().toUTCString(), done: false, ...todo })
+  Promise.resolve({ id: new Date().toUTCString(), deadline: null, createdAt: new Date(), done: false, ...todo })
 
 const deleteTodo = (id: string): Promise<void> => Promise.resolve()
 
@@ -36,7 +36,7 @@ describe("todos::actions", () => {
       const content = "Test #123"
 
       await overmind.actions.todos.add(content)
-      expect(overmind.state.todos.list.find(it => it.content === content)).toBeTruthy()
+      expect(overmind.state.todos.list.find(it => overmind.state.todos.items[it].content === content)).toBeTruthy()
     })
     it("should filter out blank values", () => {
       const overmind = createOvermindMock(config)
@@ -57,7 +57,7 @@ describe("todos::actions", () => {
 
       await overmind.actions.todos.load()
 
-      expect(overmind.state.todos.list).toEqual(todos)
+      expect(overmind.state.todos.list).toEqual(todos.map(it => it.id))
       todos.forEach(todo => expect(overmind.state.todos.items[todo.id]).toEqual(todo))
     })
   })

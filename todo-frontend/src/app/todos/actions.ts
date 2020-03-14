@@ -10,7 +10,10 @@ export const load: AsyncAction = async ({ state, actions, effects }) => {
     try {
       const list = await effects.todos.api.getAll()
       return state.todos.mode.loaded(() => {
-        state.todos.items = toMap(list)
+        state.todos.items = toMap(list.map(it => ({
+          ...it,
+          createdAt: new Date(it.createdAt),
+        })))
         actions.todos.setShow("all")
       })
     } catch (e) {
@@ -36,6 +39,40 @@ export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state
 
   item.content = content
   await effects.todos.api.update(id, { content })
+}
+
+export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async ({ state, effects }, { id, deadline: _deadline }) => {
+  const item = state.todos.items[id]
+  const originalValue = item.deadline
+  const deadline = _deadline.toISOString()
+
+  if (!item) {
+    return
+  }
+
+  item.deadline = deadline
+  try {
+    const updated = await effects.todos.api.update(id, { deadline })
+    item.deadline = updated.deadline
+  } catch (e) {
+    item.deadline = originalValue
+  }
+}
+
+export const removeDeadline: AsyncAction<TodoId> = async ({ state, effects }, id) => {
+  const item = state.todos.items[id]
+  const originalValue = item.deadline
+
+  if (!item || item.deadline === null) {
+    return
+  }
+
+  item.deadline = null
+  try {
+    await effects.todos.api.update(id, { deadline: new Date(0).toISOString() })
+  } catch (e) {
+    item.deadline = originalValue
+  }
 }
 
 export const add: Operator<string> = pipe(

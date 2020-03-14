@@ -52,12 +52,14 @@ data class TodoDTO (
     val id: TodoId,
     val content: String,
     val done: Boolean,
-    val deadline: Instant?
+    val deadline: Instant?,
+    val createdAt: Instant
 )
 
 fun TodoEntity.toDTO() = TodoDTO(
     id = id,
     content = payload.content,
     done = payload.done,
-    deadline = payload.deadline
+    deadline = payload.deadline,
+    createdAt = payload.createdAt
 )

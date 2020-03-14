@@ -6,6 +6,8 @@ export interface Todo {
   id: TodoId
   content: string
   done: boolean
+  deadline: string | null
+  createdAt: Date
 }
 
 export type TodoPatch = Partial<Omit<Todo, "id">>

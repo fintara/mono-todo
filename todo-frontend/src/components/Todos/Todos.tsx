@@ -22,7 +22,9 @@ const Todos: React.FC = () => {
         <TodosList
           items={state.todos.list}
           onToggle={actions.todos.toggle}
-          onEdit={((id, content) => actions.todos.edit({ id, content }))}
+          onEdit={(id, content) => actions.todos.edit({ id, content })}
+          onDeadlineChange={(id, deadline) => actions.todos.changeDeadline({ id, deadline })}
+          onDeadlineRemove={actions.todos.removeDeadline}
         />
 
       </Card>
