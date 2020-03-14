@@ -41,13 +41,6 @@ class TodosHandler (
         return Response(Status.OK).with(lensList of list)
     }
 
-    fun findOne(request: Request): Response {
-        // TODO: Check authorization
-        val id = idPath(request)
-        val todo = findTodo(id)?.toDTO() ?: throw EntityNotFoundException("Todo", id)
-        return Response(Status.OK).with(lens of todo)
-    }
-
     fun create(request: Request): Response {
         val userId = credentials(request).userId
         val body = createLens(request)

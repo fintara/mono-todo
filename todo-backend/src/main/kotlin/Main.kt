@@ -89,7 +89,6 @@ class App(
 
             "/todos" bind authenticated.then(routes(
                 "/"     bind GET to todosHandler::findAll,
-                "/{id}" bind GET to todosHandler::findOne,
                 "/"     bind POST to todosHandler::create,
                 "/{id}" bind PATCH to todosHandler::patch,
                 "/{id}" bind DELETE to todosHandler::delete

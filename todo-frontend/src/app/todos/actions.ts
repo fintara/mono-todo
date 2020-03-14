@@ -46,7 +46,7 @@ export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async
   const originalValue = item.deadline
   const deadline = _deadline.toISOString()
 
-  if (!item) {
+  if (!item || item.deadline === deadline) {
     return
   }
 

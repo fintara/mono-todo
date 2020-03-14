@@ -7,7 +7,7 @@ const todos: Todo[] = [
   { id: "bbbbb", content: "Def", done: false , deadline: null, createdAt: new Date() },
   { id: "ccccc", content: "Xyz", done: false , deadline: null, createdAt: new Date() },
   { id: "ddddd", content: "Qwe", done: true , deadline: null, createdAt: new Date() },
-  { id: "eeeee", content: "Uvw", done: false , deadline: null, createdAt: new Date() },
+  { id: "eeeee", content: "Uvw", done: false , deadline: new Date(new Date().getTime() + 84600).toISOString(), createdAt: new Date() },
 ]
 
 const create = (todo: TodoCreate): Promise<Todo> =>
@@ -107,6 +107,47 @@ describe("todos::actions", () => {
       await overmind.actions.todos.edit({ id, content })
 
       expect(overmind.state.todos.items[id].content).toBe(content)
+    })
+  })
+
+  describe("changeDeadline", () => {
+    it("should change deadline from null to some", async () => {
+      const id = todos[1].id
+      const deadline = new Date(new Date().getTime() + 3600)
+
+      const overmind = createOvermindMock(config, {
+        todos: {
+          api: { getAll, update }
+        }
+      })
+
+      await overmind.actions.todos.load()
+
+      expect(overmind.state.todos.items[id].deadline).toBeNull()
+
+      await overmind.actions.todos.changeDeadline({ id, deadline })
+
+      expect(overmind.state.todos.items[id].deadline).toBe(deadline.toISOString())
+    })
+  })
+
+  describe("removeDeadline", () => {
+    it("should remove deadline", async () => {
+      const id = todos[4].id
+
+      const overmind = createOvermindMock(config, {
+        todos: {
+          api: { getAll, update }
+        }
+      })
+
+      await overmind.actions.todos.load()
+
+      expect(overmind.state.todos.items[id].deadline).toBeTruthy()
+
+      await overmind.actions.todos.removeDeadline(id)
+
+      expect(overmind.state.todos.items[id].deadline).toBeNull()
     })
   })
 })

@@ -2,10 +2,7 @@ package com.tsovedenski.todo
 
 import com.tsovedenski.todo.database.Entity
 import com.tsovedenski.todo.models.*
-import com.tsovedenski.todo.test.TestApp
-import com.tsovedenski.todo.test.assertResponse
-import com.tsovedenski.todo.test.createTestApp
-import com.tsovedenski.todo.test.todos
+import com.tsovedenski.todo.test.*
 import org.assertj.core.api.Assertions.assertThat
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.*
@@ -15,6 +12,7 @@ import org.http4k.format.Jackson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import java.util.*
 
 /**
  * Created by Tsvetan Ovedenski on 07/03/2020.
@@ -29,15 +27,49 @@ class TodoTests {
     }
 
     @Test
-    fun `listing all todos requires authentication`() = assertResponse(app.todos.findAll()) {
-        status.is4xx
+    fun `listing all todos requires authentication`() =
+        assertRequiresAuthentication(app.todos.findAll())
+
+    @Test
+    fun `lists all todos by user`() {
+        val auth = app.authenticate()
+        val list = app.txProvider.todos.tx {
+            listOf(
+                Todo(auth.userId, "First", null, null, app.instantProvider()),
+                Todo(auth.userId, "Second one", app.instantProvider().plusSeconds(3600), null, app.instantProvider()),
+                Todo(auth.userId, "Three and four", null, app.instantProvider().plusSeconds(3600), app.instantProvider()),
+                Todo(auth.userId, "Three and four", app.instantProvider().plusSeconds(3600), app.instantProvider().plusSeconds(3600*2), app.instantProvider())
+            ).map { insert(it) }.mapNotNull { findById(it) }
+        }
+
+        assertResponse(app.withAuth(auth) { todos.findAll() }) {
+            status.is2xx
+            json {
+                isArray.hasSameSizeAs(list)
+
+                inPath("$[0].content").isString.isEqualTo(list[0].payload.content)
+                inPath("$[0].deadline").isNull()
+                inPath("$[0].done").isBoolean.isFalse
+
+                inPath("$[1].content").isString.isEqualTo(list[1].payload.content)
+                inPath("$[1].deadline").isString.isNotBlank
+                inPath("$[1].done").isBoolean.isFalse
+
+                inPath("$[2].content").isString.isEqualTo(list[2].payload.content)
+                inPath("$[2].deadline").isNull()
+                inPath("$[2].done").isBoolean.isTrue
+
+                inPath("$[3].content").isString.isEqualTo(list[3].payload.content)
+                inPath("$[3].deadline").isString.isNotBlank
+                inPath("$[3].done").isBoolean.isTrue
+
+            }
+        }
     }
 
     @Test
-    fun `lists all todos by user`() = assertResponse(app.withAuth { todos.findAll() }) {
-        status.is2xx
-        json.isArray
-    }
+    fun `creating a todo requires authentication`() =
+        assertRequiresAuthentication(app.todos.create(TodoCreate("test")))
 
     @Test
     fun `creates a todo`() {
@@ -62,6 +94,15 @@ class TodoTests {
         }
         return auth to todo
     }
+
+    @Test
+    fun `patching by id requires authentication`() =
+        assertRequiresAuthentication(app.todos.patch(UUID.randomUUID(), TodoPatch()))
+
+    @Test
+    fun `patching non-existing todo results in 404`() =
+        app.withAuth { todos.patch(UUID.randomUUID(), TodoPatch()) }
+            .let(::assertResponseNotFound)
 
     @Test
     fun `patches by id`() {
@@ -161,6 +202,18 @@ class TodoTests {
                 inPath("$.deadline").isString.isEqualTo(deadline.toString())
                 inPath("$.done").isBoolean.isEqualTo(todo.payload.done)
             }
+        }
+    }
+
+    @Test
+    fun `deleting by id requires authentication`() =
+        assertRequiresAuthentication(app.todos.delete(UUID.randomUUID()))
+
+    @Test
+    fun `deleting non-existing todo does not fail`() {
+        val response = app.withAuth { todos.delete(UUID.randomUUID()) }
+        assertResponse(response) {
+            status.is2xx
         }
     }
 

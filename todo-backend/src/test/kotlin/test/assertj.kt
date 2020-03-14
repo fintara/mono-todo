@@ -4,6 +4,7 @@ import net.javacrumbs.jsonunit.assertj.JsonAssert
 import net.javacrumbs.jsonunit.assertj.JsonAssertions
 import org.assertj.core.api.AbstractStringAssert
 import org.assertj.core.api.ObjectAssert
+import org.http4k.core.HttpHandler
 import org.http4k.core.Response
 import org.http4k.core.Status
 
@@ -30,4 +31,12 @@ class StatusAssertion (actual: Status) : ObjectAssert<Status>(actual) {
 
     private fun assertCodeStartsWith(value: String): AbstractStringAssert<*> =
         extracting(Status::code).asString().startsWith(value)
+}
+
+fun assertRequiresAuthentication(response: Response) = assertResponse(response) {
+    status.isEqualTo(Status.UNAUTHORIZED)
+}
+
+fun assertResponseNotFound(response: Response) = assertResponse(response) {
+    status.isEqualTo(Status.NOT_FOUND)
 }
