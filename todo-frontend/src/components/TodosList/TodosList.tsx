@@ -1,23 +1,30 @@
 import React from "react"
 import styles from "./styles.module.scss"
-import { Todo, TodoId } from "../../app/todos/types"
+import { TodoId } from "../../app/todos/types"
 import TodoItem from "../TodoItem"
+import { useApp } from "../../app"
 
 type Props = {
-  items: Todo[]
+  items: TodoId[]
   onToggle: (id: TodoId) => void
   onEdit: (id: TodoId, content: string) => void
+  onDeadlineChange: (id: TodoId, deadline: Date) => void
+  onDeadlineRemove: (id: TodoId) => void
 }
 
-const TodosList: React.FC<Props> = ({ items, onToggle, onEdit }) => {
+const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange, onDeadlineRemove }) => {
+  const { state } = useApp()
+
   return (
     <div className={styles.list}>
-      {items.map((item, index) =>
+      {items.map((id) =>
         <TodoItem
-          key={index}
-          item={item}
-          onToggle={() => onToggle(item.id)}
-          onEdit={(content => onEdit(item.id, content))}
+          key={id}
+          item={state.todos.items[id]}
+          onToggle={() => onToggle(id)}
+          onEdit={content => onEdit(id, content)}
+          onDeadlineChange={deadline => onDeadlineChange(id, deadline)}
+          onDeadlineRemove={() => onDeadlineRemove(id)}
         />
       )}
     </div>

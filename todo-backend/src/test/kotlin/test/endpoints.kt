@@ -1,6 +1,7 @@
 package com.tsovedenski.todo.test
 
 import com.tsovedenski.todo.models.Registration
+import com.tsovedenski.todo.models.TodoCreate
 import com.tsovedenski.todo.models.TodoId
 import com.tsovedenski.todo.models.TodoPatch
 import org.http4k.core.HttpHandler
@@ -48,6 +49,12 @@ val HttpHandler.users get() = Users(this)
 class Todos (private val handler: HttpHandler) : HttpHandler by handler {
     fun findAll(): Response {
         val request = Request(GET, "/todos")
+        return this(request)
+    }
+
+    fun create(form: TodoCreate): Response {
+        val json = Jackson.asJsonString(form)
+        val request = Request(POST, "/todos").body(json)
         return this(request)
     }
 

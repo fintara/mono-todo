@@ -4,7 +4,7 @@ import { Show, Todo, TodoId } from "./types"
 type State = {
   mode: Statemachine<"loading" | "loaded">
   items: Record<TodoId, Todo>
-  list: Derive<State, Todo[]>
+  list: Derive<State, TodoId[]>
   show: Show,
 }
 
@@ -17,6 +17,6 @@ export const state: State = {
     }
   }),
   items: {},
-  list: (self) => Object.values(self.items),
+  list: (self) => Object.keys(self.items),
   show: "all"
 }
