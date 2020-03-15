@@ -16,6 +16,18 @@ data class User (
     val name: String?
 )
 
+data class UserPatch (
+    val name: String? = null
+)
+
+fun User.apply(patch: UserPatch): User {
+    var out = copy()
+
+    patch.name?.let { out = out.copy(name = it) }
+
+    return out
+}
+
 typealias UserEntity = Entity<UserId, User>
 
 @Typescript

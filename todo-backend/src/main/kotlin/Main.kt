@@ -63,7 +63,8 @@ class App(
 
         val usersHandler = UsersHandler(
             credentials,
-            userService::findById
+            userService::findById,
+            userService::update
         )
 
         val todosHandler = TodosHandler(
@@ -84,7 +85,10 @@ class App(
             ),
 
             "/users" bind authenticated.then(routes(
-                "/me" bind GET to usersHandler::me
+                "/me" bind routes(
+                    "/" bind GET to usersHandler::me,
+                    "/" bind PATCH to usersHandler::editMe
+                )
             )),
 
             "/todos" bind authenticated.then(routes(

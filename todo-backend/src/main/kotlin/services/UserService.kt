@@ -3,6 +3,7 @@ package com.tsovedenski.todo.services
 import com.tsovedenski.todo.PasswordEncoder
 import com.tsovedenski.todo.database.TxManager
 import com.tsovedenski.todo.database.repositories.UserRepository
+import com.tsovedenski.todo.exceptions.DatabaseException
 import com.tsovedenski.todo.models.*
 
 /**
@@ -13,6 +14,7 @@ interface UserService {
     fun findByEmail(email: String): UserEntity?
     fun findByCredentials(credentials: Credentials): UserEntity?
     fun create(form: Registration): UserId
+    fun update(user: UserEntity, patch: UserPatch): UserEntity
 }
 
 class UserServiceImpl (
@@ -36,5 +38,11 @@ class UserServiceImpl (
             name = form.name?.takeIf { it.isNotBlank() }
         )
         return tx { insert(user) }
+    }
+
+    override fun update(user: UserEntity, patch: UserPatch): UserEntity = tx {
+        val patched = user.payload.apply(patch)
+        save(user.id, patched)
+        findById(user.id) ?: throw DatabaseException.CouldNotUpdate
     }
 }

@@ -1,9 +1,6 @@
 package com.tsovedenski.todo.test
 
-import com.tsovedenski.todo.models.Registration
-import com.tsovedenski.todo.models.TodoCreate
-import com.tsovedenski.todo.models.TodoId
-import com.tsovedenski.todo.models.TodoPatch
+import com.tsovedenski.todo.models.*
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Method.*
@@ -39,6 +36,12 @@ val HttpHandler.auth get() = Auth(this)
 class Users (private val handler: HttpHandler) : HttpHandler by handler {
     fun me(): Response {
         val request = Request(GET, "/users/me")
+        return this(request)
+    }
+
+    fun patch(patch: UserPatch): Response {
+        val json = Jackson.asJsonString(patch)
+        val request = Request(PATCH, "/users/me").body(json)
         return this(request)
     }
 }
