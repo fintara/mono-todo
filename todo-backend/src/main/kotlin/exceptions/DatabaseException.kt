@@ -8,4 +8,3 @@ sealed class DatabaseException {
     object CouldNotUpdate : RuntimeException()
 }
 
-data class EntityNotFoundException (val name: String, val identifier: Any) : IllegalArgumentException()

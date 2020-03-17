@@ -1,12 +1,12 @@
 package com.tsovedenski.todo.handlers
 
-import com.tsovedenski.todo.Authentication
-import com.tsovedenski.todo.Authenticator
-import com.tsovedenski.todo.body
-import com.tsovedenski.todo.bodyLens
+import com.tsovedenski.todo.*
+import com.tsovedenski.todo.exceptions.AuthenticationError
+import com.tsovedenski.todo.exceptions.RegistrationError
 import com.tsovedenski.todo.models.Credentials
 import com.tsovedenski.todo.models.Registration
 import com.tsovedenski.todo.models.UserEntity
+import com.tsovedenski.todo.models.UserId
 import org.http4k.core.*
 
 /**
@@ -14,8 +14,8 @@ import org.http4k.core.*
  */
 class AuthHandler (
     private val authenticator: Authenticator,
-    private val findByCredentials: (Credentials) -> UserEntity?,
-    private val insertUser: (Registration) -> Unit
+    private val findByCredentials: (Credentials) -> Either<AuthenticationError, UserEntity>,
+    private val insertUser: (Registration) -> Either<RegistrationError, UserId>
 ) {
     companion object {
         private val credentialsLens = bodyLens<Credentials>()
@@ -23,23 +23,20 @@ class AuthHandler (
     }
 
     fun login(request: Request): Response {
-        val body = credentialsLens(request)
-        val user = findByCredentials(body) ?: return badCredentials()
-        return goodCredentials(user)
+        val body = Credentials.validate(credentialsLens(request)).valid()
+        return findByCredentials(body).fold(
+            { Response(Status.UNAUTHORIZED) },
+            { user -> Response(Status.OK).body(Token(authenticator.token(Authentication(user.id)))) }
+        )
     }
 
     fun signup(request: Request): Response {
-        // TODO: fields validation
-        val body = registrationLens(request)
-        insertUser(body)
-        return Response(Status.NO_CONTENT)
+        val body = Registration.validate(registrationLens(request)).valid()
+        return insertUser(body).fold(
+            { Response(Status.BAD_REQUEST).body(it) },
+            { Response(Status.NO_CONTENT) }
+        )
     }
-
-    private fun goodCredentials(user: UserEntity) =
-        Response(Status.OK).body(Token(authenticator.token(Authentication(user.id))))
-
-    private fun badCredentials() =
-        Response(Status.UNAUTHORIZED)
 
     private data class Token (val token: String)
 }

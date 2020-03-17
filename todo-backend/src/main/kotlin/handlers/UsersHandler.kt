@@ -9,7 +9,6 @@ import com.tsovedenski.todo.models.*
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
-import org.http4k.core.with
 
 /**
  * Created by Tsvetan Ovedenski on 10/03/2020.
@@ -27,12 +26,18 @@ class UsersHandler (
     private val findByCredentials = credentials andThen Authentication::userId andThen findById
 
     fun me(request: Request): Response {
-        val user = findByCredentials(request) ?: throw EntityNotFoundException("User", "me")
+        val user = findByCredentials(request) ?: throw EntityNotFoundException(
+            "User",
+            "me"
+        )
         return Response(Status.OK).body(user.toDTO())
     }
 
     fun editMe(request: Request): Response {
-        val user = findByCredentials(request) ?: throw EntityNotFoundException("User", "me")
+        val user = findByCredentials(request) ?: throw EntityNotFoundException(
+            "User",
+            "me"
+        )
         val patch  = patchLens(request)
         val updated = updateUser(user, patch).toDTO()
 

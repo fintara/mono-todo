@@ -87,6 +87,26 @@ class TodoTests {
         }
     }
 
+    @Test
+    fun `todo content is trimmed`() {
+        val form = TodoCreate("  test 5\t")
+
+        assertResponse(app.withAuth { todos.create(form) }) {
+            status.is2xx
+            json {
+                isObject.containsKey("content")
+                inPath("$.content").isString.isEqualTo("test 5")
+            }
+        }
+    }
+
+    private fun cannotCreateTodo(content: String) = assertResponse(app.withAuth { todos.create(TodoCreate(content)) }) {
+        status.is4xx
+    }
+
+    @Test fun `cannot create todo with empty string`() = cannotCreateTodo("")
+    @Test fun `cannot create todo with blank string`() = cannotCreateTodo("     ")
+
     private fun prepareTodo(): Pair<Authentication, TodoEntity> {
         val auth = app.authenticate()
         val todo = app.txProvider.todos.tx {
@@ -124,6 +144,37 @@ class TodoTests {
         assertThat(updated.payload.content).isEqualTo(patch.content)
         assertThat(updated.payload.doneAt).isEqualTo(now)
         assertThat(updated.payload.done).isEqualTo(patch.done)
+    }
+
+    @Test
+    fun `patched todo content is trimmed`() {
+        val (auth, todo) = prepareTodo()
+        val patch = TodoPatch("  test 5\t")
+
+        assertResponse(app.withAuth(auth) { todos.patch(todo.id, patch) }) {
+            status.is2xx
+            json {
+                isObject.containsKey("content")
+                inPath("$.content").isString.isEqualTo("test 5")
+            }
+        }
+    }
+
+    @Test
+    fun `patched content cannot be blank`() {
+        val (auth, todo) = prepareTodo()
+        require(!todo.payload.done)
+
+        val patch = TodoPatch(content = "  ", done = true)
+
+        assertResponse(app.withAuth(auth) { todos.patch(todo.id, patch) }) {
+            status.is4xx
+        }
+
+        val fresh = app.txProvider.todos.tx { findById(todo.id)!! }
+
+        assertThat(fresh.payload.content).isEqualTo(todo.payload.content)
+        assertThat(fresh.payload.done).isEqualTo(todo.payload.done)
     }
 
     @Test

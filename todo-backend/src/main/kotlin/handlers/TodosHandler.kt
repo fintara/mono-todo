@@ -1,8 +1,6 @@
 package com.tsovedenski.todo.handlers
 
-import com.tsovedenski.todo.Authentication
-import com.tsovedenski.todo.andThen
-import com.tsovedenski.todo.bodyLens
+import com.tsovedenski.todo.*
 import com.tsovedenski.todo.exceptions.EntityNotFoundException
 import com.tsovedenski.todo.models.*
 import org.http4k.core.Request
@@ -43,16 +41,19 @@ class TodosHandler (
 
     fun create(request: Request): Response {
         val userId = credentials(request).userId
-        val body = createLens(request)
+        val body = TodoCreate.validate(createLens(request)).valid()
         val todo = createTodo(body, userId).toDTO()
         return Response(Status.CREATED).with(lens of todo)
     }
 
     fun patch(request: Request): Response {
         val id = idPath(request)
-        val todo = findTodo(id) ?: throw EntityNotFoundException("Todo", id)
+        val todo = findTodo(id) ?: throw EntityNotFoundException(
+            "Todo",
+            id
+        )
 
-        val patch  = patchLens(request)
+        val patch  = TodoPatch.validate(patchLens(request)).valid()
         val updated = updateTodo(todo, patch).toDTO()
 
         return Response(Status.OK).with(lens of updated)

@@ -31,7 +31,7 @@ class TodoServiceImpl (
     }
 
     override fun create(item: TodoCreate, userId: UserId): TodoEntity = tx {
-        val todo = Todo(userId, item.content, null, null, now())
+        val todo = Todo(userId, item.content.trim(), null, null, now())
         val id = insert(todo)
         findById(id) ?: throw DatabaseException.CouldNotInsert
     }

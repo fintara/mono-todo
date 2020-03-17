@@ -3,6 +3,7 @@ package com.tsovedenski.todo
 import com.tsovedenski.todo.database.ExposedTxProvider
 import com.tsovedenski.todo.database.TxProvider
 import com.tsovedenski.todo.exceptions.EntityNotFoundException
+import com.tsovedenski.todo.exceptions.ValidationException
 import com.tsovedenski.todo.handlers.AuthHandler
 import com.tsovedenski.todo.handlers.PingPongHandler
 import com.tsovedenski.todo.handlers.TodosHandler
@@ -29,7 +30,7 @@ import java.time.Instant
 fun main() {
     val config = cloudnativeConfig(Environment.JVM_PROPERTIES, defaultConfig())
     val app = App(config)
-    app.asServer(Jetty(8080)).start().block()
+    app.asServer(Jetty(config.server.port)).start().block()
 }
 
 class App(
@@ -58,7 +59,7 @@ class App(
         val authHandler = AuthHandler(
             authenticator,
             userService::findByCredentials,
-            userService::create.asUnit() // https://youtrack.jetbrains.com/issue/KT-11723
+            userService::create
         )
 
         val usersHandler = UsersHandler(
@@ -106,6 +107,11 @@ class App(
                 next(req)
             } catch (e: EntityNotFoundException) {
                 Response(Status.NOT_FOUND)
+            } catch (e: ValidationException) {
+                val aggregated = e.errors
+                    .groupBy { it.field }
+                    .mapValues { (_, list) -> list.map { it.violation } }
+                Response(Status.BAD_REQUEST).body(aggregated)
             } catch (e: Throwable) {
                 e.printStackTrace()
                 Response(Status.INTERNAL_SERVER_ERROR)
