@@ -1,13 +1,22 @@
-import React from "react"
+import React, { useCallback, useState } from "react"
 import styles from "./styles.module.scss"
 import Container from "../../ui/Container"
-import { Card } from "@blueprintjs/core"
+import { Alert, Card } from "@blueprintjs/core"
 import { useApp } from "../../app"
 import TodosList from "../TodosList"
 import TodoInput from "../TodoInput"
+import { TodoId } from "../../app/todos/types"
 
 const Todos: React.FC = () => {
   const { state, actions } = useApp()
+
+  const [isRemoving, setRemoving] = useState<TodoId | null>(null)
+
+  const handleConfirmRemove = useCallback(() => {
+    if (!isRemoving) return
+    actions.todos.remove(isRemoving)
+    setRemoving(null)
+  }, [actions.todos, isRemoving])
 
   return (
     <Container size="normal" className={styles.container}>
@@ -25,7 +34,20 @@ const Todos: React.FC = () => {
           onEdit={(id, content) => actions.todos.edit({ id, content })}
           onDeadlineChange={(id, deadline) => actions.todos.changeDeadline({ id, deadline })}
           onDeadlineRemove={actions.todos.removeDeadline}
+          onRemove={setRemoving}
         />
+
+        <Alert
+          cancelButtonText="Cancel"
+          confirmButtonText="Remove"
+          icon="trash"
+          intent="danger"
+          isOpen={isRemoving != null}
+          onCancel={() => setRemoving(null)}
+          onConfirm={handleConfirmRemove}
+        >
+          {isRemoving && <>Are you sure you want to remove "{state.todos.items[isRemoving].content}"?</>}
+        </Alert>
 
       </Card>
     </Container>

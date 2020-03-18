@@ -10,9 +10,10 @@ type Props = {
   onEdit: (id: TodoId, content: string) => void
   onDeadlineChange: (id: TodoId, deadline: Date) => void
   onDeadlineRemove: (id: TodoId) => void
+  onRemove: (id: TodoId) => void
 }
 
-const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange, onDeadlineRemove }) => {
+const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange, onDeadlineRemove, onRemove }) => {
   const { state } = useApp()
 
   return (
@@ -25,6 +26,7 @@ const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange,
           onEdit={content => onEdit(id, content)}
           onDeadlineChange={deadline => onDeadlineChange(id, deadline)}
           onDeadlineRemove={() => onDeadlineRemove(id)}
+          onRemove={() => onRemove(id)}
         />
       )}
     </div>

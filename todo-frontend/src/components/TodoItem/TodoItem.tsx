@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react"
-import { Checkbox, EditableText } from "@blueprintjs/core"
+import { Button, Checkbox, EditableText } from "@blueprintjs/core"
 import classNames from "classnames"
 import styles from "./styles.module.scss"
 import { Todo } from "../../app/todos/types"
@@ -11,9 +11,10 @@ type Props = {
   onEdit: (content: string) => void
   onDeadlineChange: (deadline: Date) => void
   onDeadlineRemove: () => void
+  onRemove: () => void
 }
 
-const TodoItem: React.FC<Props> = ({ item, onToggle, onEdit, onDeadlineChange, onDeadlineRemove }) => {
+const TodoItem: React.FC<Props> = ({ item, onToggle, onEdit, onDeadlineChange, onDeadlineRemove, onRemove }) => {
   const [content, setContent] = useState(item.content)
 
   const handleEdit = useCallback((content: string) => {
@@ -51,6 +52,13 @@ const TodoItem: React.FC<Props> = ({ item, onToggle, onEdit, onDeadlineChange, o
           minDate={item.createdAt}
           onChange={onDeadlineChange}
           onRemove={onDeadlineRemove}
+        />
+      </span>
+      <span className={styles.removeWrapper}>
+        <Button
+          minimal={true}
+          icon="cross"
+          onClick={onRemove}
         />
       </span>
     </div>

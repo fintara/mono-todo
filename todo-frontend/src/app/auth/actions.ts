@@ -45,6 +45,10 @@ export const register: AsyncAction<Registration> = async ({ state, actions, effe
   return state.auth.mode.registering(async () => {
     state.auth.error = null
 
+    if (form.name?.trim()?.length === 0) {
+      form.name = null
+    }
+
     try {
       await effects.auth.api.register(form)
       return state.auth.mode.registered(() => {

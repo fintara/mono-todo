@@ -8,6 +8,7 @@ import Register from "../Register"
 import Todos from "../Todos"
 import Error404 from "../Error404"
 import AppHeader from "../AppHeader"
+import { Toaster } from "@blueprintjs/core"
 
 const pagesDictionary: { [page in Page]: React.FC } = {
   "home": Home,
@@ -18,7 +19,7 @@ const pagesDictionary: { [page in Page]: React.FC } = {
 }
 
 const App: React.FC = () => {
-  const { state } = useApp()
+  const { state, effects } = useApp()
 
   const PageComponent = pagesDictionary[state.router.page]
 
@@ -26,6 +27,8 @@ const App: React.FC = () => {
     <div className={styles.container}>
       <AppHeader />
       <PageComponent />
+
+      <Toaster ref={ref => effects.toaster.instance.initialize(ref)} />
     </div>
   )
 }

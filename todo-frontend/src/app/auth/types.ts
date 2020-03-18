@@ -1,7 +1,7 @@
 export type Registration = {
   email: string;
   password: string;
-  name: string;
+  name: string | null;
 }
 
 export type Credentials = {

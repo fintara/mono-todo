@@ -10,6 +10,8 @@ const todos: Todo[] = [
   { id: "eeeee", content: "Uvw", done: false , deadline: new Date(new Date().getTime() + 84600).toISOString(), createdAt: new Date() },
 ]
 
+const showMessage = jest.fn()
+
 const create = (todo: TodoCreate): Promise<Todo> =>
   Promise.resolve({ id: new Date().toUTCString(), deadline: null, createdAt: new Date(), done: false, ...todo })
 
@@ -29,6 +31,7 @@ describe("todos::actions", () => {
   describe("add", () => {
     it("should add value", async () => {
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { create }
         }
@@ -50,6 +53,7 @@ describe("todos::actions", () => {
   describe("load", () => {
     it("should load", async () => {
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { getAll }
         }
@@ -67,6 +71,7 @@ describe("todos::actions", () => {
     return async () => {
       const id = todos[index].id
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { getAll, update }
         }
@@ -98,6 +103,7 @@ describe("todos::actions", () => {
         return Promise.resolve({...todos.find(it => it.id === id)!, ...patch})
       })
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { getAll, update: updateMock }
         }
@@ -116,6 +122,7 @@ describe("todos::actions", () => {
       const deadline = new Date(new Date().getTime() + 3600)
 
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { getAll, update }
         }
@@ -136,6 +143,7 @@ describe("todos::actions", () => {
       const id = todos[4].id
 
       const overmind = createOvermindMock(config, {
+        toaster: { instance: { showMessage } },
         todos: {
           api: { getAll, update }
         }

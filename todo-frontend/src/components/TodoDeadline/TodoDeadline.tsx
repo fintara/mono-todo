@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Button, ButtonGroup, Intent, Popover, Tag } from "@blueprintjs/core"
 import { DatePicker, TimePrecision } from "@blueprintjs/datetime"
 import { format, isYesterday, isToday, isTomorrow, isBefore, addHours } from "date-fns"
@@ -45,7 +45,7 @@ type Props = {
 
 const TodoDeadlineDone: React.FC<Pick<Props, "current">> = ({ current }) => {
   if (!current) {
-    return <></>
+    return null
   }
   const [btnText] = formatDeadline(current)
   return <Tag intent="success" large={true} className={styles.tag}>{btnText}</Tag>
@@ -55,6 +55,10 @@ const TodoDeadlineUndone: React.FC<Omit<Props, "done">> = ({ current, minDate, o
   const [isPickerOpen, setPickerOpen] = useState(false)
   const [deadline, setDeadline] = useState(current ? new Date(current) : addHours(new Date(), 4))
   const [btnText, btnIntent] = formatDeadline(current)
+
+  useEffect(() => {
+    setDeadline(current ? new Date(current) : addHours(new Date(), 4))
+  }, [current, isPickerOpen])
 
   const handleClose = useCallback((value: Date) => {
     value && onChange(value)
@@ -69,7 +73,6 @@ const TodoDeadlineUndone: React.FC<Omit<Props, "done">> = ({ current, minDate, o
       timePrecision={TimePrecision.MINUTE}
       minDate={new Date(minDate)}
       dayPickerProps={{ firstDayOfWeek: 1 }}
-      timePickerProps={{ minTime: new Date(minDate) }}
     />
     <Button
       intent="success"
