@@ -3,6 +3,7 @@ package com.tsovedenski.todo
 import com.tsovedenski.todo.database.ExposedTxProvider
 import com.tsovedenski.todo.database.TxProvider
 import com.tsovedenski.todo.exceptions.EntityNotFoundException
+import com.tsovedenski.todo.exceptions.UnauthorizedException
 import com.tsovedenski.todo.exceptions.ValidationException
 import com.tsovedenski.todo.handlers.AuthHandler
 import com.tsovedenski.todo.handlers.PingPongHandler
@@ -39,6 +40,7 @@ class App(
     val instantProvider: InstantProvider = { Instant.now() },
     val txProvider: TxProvider = ExposedTxProvider.create(config.database),
     val passwordEncoder: PasswordEncoder = BcryptPasswordEncoder,
+    val permissionVerifier: PermissionVerifier = DefaultPermissionVerifier,
 
     val userService: UserService = UserServiceImpl(passwordEncoder, txProvider.users),
     val todoService: TodoService = TodoServiceImpl(instantProvider, txProvider.todos),
@@ -70,6 +72,7 @@ class App(
 
         val todosHandler = TodosHandler(
             credentials,
+            permissionVerifier,
             todoService::findAll,
             todoService::findOne,
             todoService::create,
@@ -107,6 +110,8 @@ class App(
                 next(req)
             } catch (e: EntityNotFoundException) {
                 Response(Status.NOT_FOUND)
+            } catch (e: UnauthorizedException) {
+                Response(Status.UNAUTHORIZED)
             } catch (e: ValidationException) {
                 val aggregated = e.errors
                     .groupBy { it.field }

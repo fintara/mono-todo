@@ -8,6 +8,7 @@ import org.http4k.core.HttpHandler
 import org.http4k.core.Method.*
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.format.Jackson
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,13 +33,14 @@ class TodoTests {
 
     @Test
     fun `lists all todos by user`() {
+        val now = app.instantProvider()
         val auth = app.authenticate()
         val list = app.txProvider.todos.tx {
             listOf(
-                Todo(auth.userId, "First", null, null, app.instantProvider()),
-                Todo(auth.userId, "Second one", app.instantProvider().plusSeconds(3600), null, app.instantProvider()),
-                Todo(auth.userId, "Three and four", null, app.instantProvider().plusSeconds(3600), app.instantProvider()),
-                Todo(auth.userId, "Three and four", app.instantProvider().plusSeconds(3600), app.instantProvider().plusSeconds(3600*2), app.instantProvider())
+                Todo(auth.userId, "First", null, null, now),
+                Todo(auth.userId, "Second one", now.plusSeconds(3600), null, now),
+                Todo(auth.userId, "Three and four", null, now.plusSeconds(3600), now),
+                Todo(auth.userId, "Three and four", now.plusSeconds(3600), now.plusSeconds(3600*2), now)
             ).map { insert(it) }.mapNotNull { findById(it) }
         }
 
@@ -257,14 +259,36 @@ class TodoTests {
     }
 
     @Test
+    fun `cannot edit todo by another user`() {
+        val auth1 = app.authenticate(email = "aaaaaa@gmail.com")
+        val auth2 = app.authenticate(email = "bbbbbb@gmail.com")
+
+        val todoIdBy1 = app.txProvider.todos.tx {
+            insert(Todo(auth1.userId, "test", null, null, app.instantProvider()))
+        }
+
+        val patch = TodoPatch(content = "CHANGED !!!")
+
+        assertResponse(app.withAuth(auth2) { todos.patch(todoIdBy1, patch) }) {
+            status.isEqualTo(Status.UNAUTHORIZED)
+        }
+
+        val todo = app.txProvider.todos.tx { findById(todoIdBy1) }
+
+        requireNotNull(todo)
+
+        assertThat(todo.payload.content).isEqualTo("test")
+    }
+
+    @Test
     fun `deleting by id requires authentication`() =
         assertRequiresAuthentication(app.todos.delete(UUID.randomUUID()))
 
     @Test
-    fun `deleting non-existing todo does not fail`() {
+    fun `deleting non-existing todo fails`() {
         val response = app.withAuth { todos.delete(UUID.randomUUID()) }
         assertResponse(response) {
-            status.is2xx
+            status.is4xx
         }
     }
 
@@ -278,5 +302,21 @@ class TodoTests {
         }
 
         assertThat(app.txProvider.todos.tx { findById(todoId) }).isNull()
+    }
+
+    @Test
+    fun `cannot delete todo by another user`() {
+        val auth1 = app.authenticate(email = "aaaaaa@gmail.com")
+        val auth2 = app.authenticate(email = "bbbbbb@gmail.com")
+
+        val todoIdBy1 = app.txProvider.todos.tx {
+            insert(Todo(auth1.userId, "test", null, null, app.instantProvider()))
+        }
+
+        assertResponse(app.withAuth(auth2) { todos.delete(todoIdBy1) }) {
+            status.isEqualTo(Status.UNAUTHORIZED)
+        }
+
+        assertThat(app.txProvider.todos.tx { findById(todoIdBy1) }).isNotNull
     }
 }
