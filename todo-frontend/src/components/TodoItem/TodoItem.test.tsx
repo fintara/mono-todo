@@ -4,7 +4,7 @@ import { Todo } from "../../app/todos/types"
 import TodoItem from "./TodoItem"
 import styles from "./styles.module.scss"
 
-const noop: (...any: any) => any = () => {}
+const noop = jest.fn()
 
 describe("TodoItem", () => {
   it("should not be editable when todo is done", () => {
@@ -12,10 +12,12 @@ describe("TodoItem", () => {
 
     const { getByText } = render(<TodoItem
       item={todo}
+      disabled={false}
       onToggle={noop}
       onEdit={noop}
       onDeadlineChange={noop}
       onDeadlineRemove={noop}
+      onRemove={noop}
     />)
 
     expect(getByText(todo.content)).toHaveClass(styles.content)
@@ -26,12 +28,14 @@ describe("TodoItem", () => {
 
     const { getByText } = render(<TodoItem
       item={todo}
+      disabled={false}
       onToggle={noop}
       onEdit={noop}
       onDeadlineChange={noop}
       onDeadlineRemove={noop}
+      onRemove={noop}
     />)
 
-    expect(getByText(todo.content)).toHaveClass("bp3-editable-text-content")
+    expect(getByText(todo.content)).toHaveClass("editable")
   })
 })

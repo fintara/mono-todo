@@ -1,11 +1,10 @@
 .item {
-  display         : flex;
-  align-content   : center;
-  flex-direction  : row;
-  justify-content : center;
-  width           : 100%;
-  margin-top      : 0.5rem;
-  margin-bottom   : 0.5rem;
+  position       : relative;
+  display        : flex;
+  flex-direction : row;
+  width          : 100%;
+  margin-top     : 0.5rem;
+  margin-bottom  : 0.5rem;
 
   &:hover {
     .removeWrapper {
@@ -18,6 +17,10 @@
       text-decoration : line-through;
       opacity         : 0.667;
     }
+
+    .deadlineWrapper {
+      cursor : default;
+    }
   }
 
   &.disabled {
@@ -27,8 +30,11 @@
   }
 
   .body {
-    flex-grow  : 1;
-    text-align : start;
+    display         : flex;
+    flex-grow       : 1;
+    justify-content : flex-start;
+    max-width       : 92%;
+    text-align      : left;
 
     > * {
       vertical-align : top;
@@ -36,17 +42,18 @@
   }
 
   span.content {
-    display      : inline-block;
-    margin-top   : 1px;
-    margin-right : 2px;
+    display       : inline-block;
+    overflow      : hidden;
+    max-width     : 80%;
+    white-space   : nowrap;
+    text-overflow : ellipsis;
   }
 
   .content {
-    font-size     : 1.25em;
-    padding-right : 0.25rem;
-    padding-left  : 0.25rem;
-    transition    : opacity 400ms;
-    text-align    : left;
+    font-size    : 1.25em;
+    margin-right : 0.25rem;
+    margin-left  : 0.25rem;
+    text-align   : left;
   }
 
   .checkboxWrapper {

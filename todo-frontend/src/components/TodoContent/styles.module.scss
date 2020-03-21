@@ -1,0 +1,17 @@
+.editable {
+  &:hover {
+    cursor           : text;
+    transition       : background-color 400ms;
+    background-color : lightyellow;
+  }
+}
+
+.readOnly {
+  cursor : default;
+  border : 1px solid white;
+}
+
+.textbox {
+  width   : 80%;
+  padding : 1px;
+}

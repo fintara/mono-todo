@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from "react"
-import { Button, Checkbox, EditableText } from "@blueprintjs/core"
+import React from "react"
+import { Button, Checkbox } from "@blueprintjs/core"
 import classNames from "classnames"
 import styles from "./styles.module.scss"
 import { Todo } from "../../app/todos/types"
 import TodoDeadline from "../TodoDeadline"
+import TodoContent from "../TodoContent"
 
 type Props = {
   item: Todo,
@@ -16,16 +17,6 @@ type Props = {
 }
 
 const TodoItem: React.FC<Props> = ({ item, disabled, onToggle, onEdit, onDeadlineChange, onDeadlineRemove, onRemove }) => {
-  const [content, setContent] = useState(item.content)
-
-  const handleEdit = useCallback((content: string) => {
-    if (!content.trim()) {
-      setContent(item.content)
-      return
-    }
-    onEdit(content.trim())
-  }, [item.content, setContent, onEdit])
-
   return (
     <div className={classNames(styles.item, { [styles.disabled]: disabled, [styles.done]: item.done })}>
       <span className={styles.checkboxWrapper}>
@@ -37,17 +28,13 @@ const TodoItem: React.FC<Props> = ({ item, disabled, onToggle, onEdit, onDeadlin
         />
       </span>
       <div className={styles.body}>
-        {item.done
-          ? <span className={styles.content}>{content}</span>
-          : <EditableText
-            className={styles.content}
-            minWidth={10}
-            multiline={false}
-            value={content}
-            onChange={setContent}
-            onConfirm={handleEdit}
-          />}
-          <span className={styles.deadlineWrapper}>
+        <TodoContent
+          done={item.done}
+          content={item.content}
+          onConfirm={onEdit}
+          className={styles.content}
+        />
+        <span className={styles.deadlineWrapper}>
           <TodoDeadline
             done={item.done}
             current={item.deadline}
