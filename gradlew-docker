@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+ARGS=${@:1}
+GRADLE_IMAGE="gradle:6.1.1-jdk11"
+
+echo "Running gradle $ARGS in $GRADLE_IMAGE at $PWD"
+docker volume create --name gradle-cache || echo 1 > /dev/null 2>&1
+docker run --rm \
+  -u gradle \
+  -v gradle-cache:/home/gradle/.gradle \
+  -v "$PWD":/home/gradle/project \
+  -w /home/gradle/project \
+  "$GRADLE_IMAGE" gradle $ARGS
