@@ -1,5 +1,5 @@
-import { Action, AsyncAction, catchError, filter, map, mutate, Operator, pipe } from "overmind"
-import { Show, TodoId } from "./types"
+import { Action, AsyncAction, mutate, Operator } from "overmind"
+import { Show, Todo, TodoId } from "./types"
 import { toMap } from "../common/utils"
 
 export const setShow: Operator<Show> =
@@ -18,12 +18,13 @@ export const load: AsyncAction = async ({ state, actions, effects }) => {
       })
     } catch (e) {
       console.error(e)
+      actions.toaster.showError("Could not load todos.")
       return state.todos.mode.loaded()
     }
   })
 }
 
-export const toggle: AsyncAction<TodoId> = async ({ state, effects }, id) => {
+export const toggle: AsyncAction<TodoId> = async ({ state, actions, effects }, id) => {
   const item = state.todos.items[id]
   item.done = !item.done
 
@@ -31,11 +32,11 @@ export const toggle: AsyncAction<TodoId> = async ({ state, effects }, id) => {
     await effects.todos.api.update(id, { done: item.done })
   } catch (e) {
     item.done = !item.done
-    effects.toaster.instance.showMessage("Could not save changes.", "danger")
+    actions.toaster.showError("Could not save changes.")
   }
 }
 
-export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state, effects }, { id, content: _content }) => {
+export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state, actions, effects }, { id, content: _content }) => {
   const item = state.todos.items[id]
   const content = _content.trim()
 
@@ -48,14 +49,17 @@ export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state
 
   try {
     await effects.todos.api.update(id, { content })
-    effects.toaster.instance.showMessage("Todo was saved.", "success")
+    actions.toaster.showSuccess("Todo was saved.")
   } catch (e) {
     item.content = original
-    effects.toaster.instance.showMessage("Could not save changes.", "danger")
+    actions.toaster.showError("Could not save changes.")
   }
 }
 
-export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async ({ state, effects }, { id, deadline: _deadline }) => {
+export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async (
+  { state, actions, effects },
+  { id, deadline: _deadline }
+) => {
   const item = state.todos.items[id]
   const originalValue = item.deadline
   const deadline = _deadline.toISOString()
@@ -70,11 +74,11 @@ export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async
     item.deadline = updated.deadline
   } catch (e) {
     item.deadline = originalValue
-    effects.toaster.instance.showMessage("Could not save changes.", "danger")
+    actions.toaster.showError("Could not save changes.")
   }
 }
 
-export const removeDeadline: AsyncAction<TodoId> = async ({ state, effects }, id) => {
+export const removeDeadline: AsyncAction<TodoId> = async ({ state, actions, effects }, id) => {
   const item = state.todos.items[id]
   const originalValue = item.deadline
 
@@ -87,19 +91,38 @@ export const removeDeadline: AsyncAction<TodoId> = async ({ state, effects }, id
     await effects.todos.api.update(id, { deadline: new Date(0).toISOString() })
   } catch (e) {
     item.deadline = originalValue
-    effects.toaster.instance.showMessage("Could not save changes.", "danger")
+    actions.toaster.showError("Could not save changes.")
   }
 }
 
-export const add: Operator<string> = pipe(
-  map((_, value) => value.trim()),
-  filter((_, value) => value.length > 0),
-  map(async ({ effects }, content) => effects.todos.api.create({ content })),
-  mutate(({ state }, todo) => state.todos.items[todo.id] = todo),
-  catchError(({ effects }) => effects.toaster.instance.showMessage("Could not add new todo.", "danger"))
-)
+export const add: AsyncAction<string> = async ({ state, actions, effects }, _content) => {
+  const content = _content.trim()
 
-export const remove: AsyncAction<TodoId> = async ({ state, effects }, id) => {
+  if (content.length === 0) {
+    return
+  }
+
+  const createdAt = new Date()
+  const id = createdAt.getTime().toString()
+
+  const todoOptimistic: Todo = { id, content, deadline: null, createdAt, done: false }
+  state.todos.disabled.push(todoOptimistic.id)
+  state.todos.items[todoOptimistic.id] = todoOptimistic
+
+  try {
+    const todo = await effects.todos.api.create({ content })
+    state.todos.items[todo.id] = {...todo, createdAt }
+  } catch (e) {
+    console.error(e)
+    actions.toaster.showError("Could not add a new todo.")
+  } finally {
+    delete state.todos.items[todoOptimistic.id]
+    const index = state.todos.disabled.indexOf(todoOptimistic.id)
+    index > -1 && state.todos.disabled.splice(index, 1)
+  }
+}
+
+export const remove: AsyncAction<TodoId> = async ({ state, actions, effects }, id) => {
   const item = state.todos.items[id]
 
   if (!item) {
@@ -111,10 +134,10 @@ export const remove: AsyncAction<TodoId> = async ({ state, effects }, id) => {
 
   try {
     await effects.todos.api.delete(id)
-    effects.toaster.instance.showMessage("Todo was removed.", "success")
+    actions.toaster.showSuccess("Todo was removed.")
   } catch (e) {
     state.todos.items[id] = original
-    effects.toaster.instance.showMessage("Could not remove the todo.", "danger")
+    actions.toaster.showError("Could not remove the todo.")
   }
 }
 

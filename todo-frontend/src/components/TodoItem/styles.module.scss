@@ -1,30 +1,56 @@
 .item {
-  display        : flex;
-  flex-direction : row;
-  width          : 100%;
-  margin-top     : 0.5rem;
-  margin-bottom  : 0.5rem;
+  display         : flex;
+  align-content   : center;
+  flex-direction  : row;
+  justify-content : center;
+  width           : 100%;
+  margin-top      : 0.5rem;
+  margin-bottom   : 0.5rem;
+
+  &:hover {
+    .removeWrapper {
+      opacity : 1;
+    }
+  }
 
   &.done {
-    text-decoration : line-through;
-    opacity         : 0.667;
+    .content {
+      text-decoration : line-through;
+      opacity         : 0.667;
+    }
+  }
+
+  &.disabled {
+    cursor         : default;
+    pointer-events : none;
+    opacity        : 0.5;
+  }
+
+  .body {
+    flex-grow  : 1;
+    text-align : start;
+
+    > * {
+      vertical-align : top;
+    }
   }
 
   span.content {
+    display      : inline-block;
     margin-top   : 1px;
     margin-right : 2px;
   }
 
   .content {
-    font-size      : 1.25em;
-    padding-right  : 0.25rem;
-    padding-left   : 0.25rem;
-    text-align     : left;
-    vertical-align : middle;
+    font-size     : 1.25em;
+    padding-right : 0.25rem;
+    padding-left  : 0.25rem;
+    transition    : opacity 400ms;
+    text-align    : left;
   }
 
   .checkboxWrapper {
-    line-height : 24px;
+    line-height : 25px;
 
     label {
       margin-right : 0.5rem;
@@ -37,5 +63,11 @@
 
   .deadlineWrapper {
     margin-left : 1rem;
+  }
+
+  .removeWrapper {
+    margin-left : 1rem;
+    transition  : opacity 300ms;
+    opacity     : 0.25;
   }
 }

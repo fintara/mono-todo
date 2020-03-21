@@ -30,6 +30,7 @@ const Todos: React.FC = () => {
 
         <TodosList
           items={state.todos.list}
+          disabled={state.todos.disabled}
           onToggle={actions.todos.toggle}
           onEdit={(id, content) => actions.todos.edit({ id, content })}
           onDeadlineChange={(id, deadline) => actions.todos.changeDeadline({ id, deadline })}

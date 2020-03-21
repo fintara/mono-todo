@@ -6,6 +6,7 @@ import { useApp } from "../../app"
 
 type Props = {
   items: TodoId[]
+  disabled: TodoId[]
   onToggle: (id: TodoId) => void
   onEdit: (id: TodoId, content: string) => void
   onDeadlineChange: (id: TodoId, deadline: Date) => void
@@ -13,7 +14,7 @@ type Props = {
   onRemove: (id: TodoId) => void
 }
 
-const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange, onDeadlineRemove, onRemove }) => {
+const TodosList: React.FC<Props> = ({ items, disabled, onToggle, onEdit, onDeadlineChange, onDeadlineRemove, onRemove }) => {
   const { state } = useApp()
 
   return (
@@ -21,6 +22,7 @@ const TodosList: React.FC<Props> = ({ items, onToggle, onEdit, onDeadlineChange,
       {items.map((id) =>
         <TodoItem
           key={id}
+          disabled={disabled.includes(id)}
           item={state.todos.items[id]}
           onToggle={() => onToggle(id)}
           onEdit={content => onEdit(id, content)}
