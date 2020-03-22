@@ -3,8 +3,8 @@ import { Button, Checkbox } from "@blueprintjs/core"
 import classNames from "classnames"
 import styles from "./styles.module.scss"
 import { Todo } from "../../app/todos/types"
-import TodoDeadline from "../TodoDeadline"
-import TodoContent from "../TodoContent"
+import TodoDeadline from "./TodoDeadline"
+import TodoContent from "./TodoContent"
 
 type Props = {
   item: Todo,

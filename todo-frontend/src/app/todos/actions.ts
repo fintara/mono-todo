@@ -1,5 +1,5 @@
 import { Action, AsyncAction, mutate, Operator } from "overmind"
-import { DueFilter, SizeFilter, Todo, TodoId } from "./types"
+import { DueFilter, SizeFilter, Todo, TodoId, VisibilityFilter } from "./types"
 import { toMap } from "../common/utils"
 
 
@@ -144,6 +144,10 @@ export const changeSize: Action<SizeFilter> = ({ state }, value) => {
 
 export const changeDue: Action<DueFilter> = ({ state }, value) => {
   state.todos.dueFilter = value
+}
+
+export const changeVisibility: Action<VisibilityFilter> = ({ state }, value) => {
+  state.todos.visibility = value
 }
 
 export const nextPage: Action = ({ state }) => {

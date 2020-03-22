@@ -1,8 +1,11 @@
+@import "../../variables";
+
 .container {
   margin-top : 6rem;
 }
 
 .headerText {
+  font-family   : $fontSerif;
   margin-bottom : 1.25rem !important;
 }
 

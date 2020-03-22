@@ -17,7 +17,7 @@ const Login: React.FC = () => {
   return (
     <Container size="small" className={styles.container}>
       <Card elevation={3}>
-        <H2>Log in</H2>
+        <H2 className={styles.header}>Log in</H2>
 
         {state.auth.mode.current === "error" &&
           <Callout className={styles.callout} intent="danger">{state.auth.error}</Callout>}

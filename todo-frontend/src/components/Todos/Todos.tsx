@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react"
 import styles from "./styles.module.scss"
 import Container from "../../ui/Container"
-import { Alert, Card } from "@blueprintjs/core"
+import { Alert, Card, Spinner } from "@blueprintjs/core"
 import { useApp } from "../../app"
 import TodosList from "../TodosList"
 import TodoInput from "../TodoInput"
@@ -31,6 +31,12 @@ const Todos: React.FC = () => {
             onSubmit={actions.todos.add}
           />
         </div>
+
+        {state.todos.mode.current === "loading" && <Spinner size={32} />}
+
+        {state.todos.mode.current === "loaded" && state.todos.visibleCount === 0 && <div className={styles.empty}>
+            Nothing here yet. Add your {state.todos.count === 0 ? "first" : "next"} todo!
+        </div>}
 
         <TodosList
           items={state.todos.list}

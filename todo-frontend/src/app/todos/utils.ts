@@ -1,5 +1,5 @@
 import { isToday, differenceInCalendarDays, isSameWeek, addDays, isSameDay } from "date-fns"
-import { DueFilter, Todo } from "./types"
+import { DueFilter, Todo, VisibilityFilter } from "./types"
 
 export function showDueFilter(todo: Todo, due: DueFilter, now: Date): boolean {
   if (due === "off") {
@@ -22,8 +22,26 @@ export function showDueFilter(todo: Todo, due: DueFilter, now: Date): boolean {
       return isSameWeek(addDays(now, 7), new Date(todo.deadline), { weekStartsOn: 1 })
 
     default:
-      const exchaustive: never = due
+      const exhaustive: never = due
   }
 
-  return false
+  throw Error("unreachable")
+}
+
+export function showVisibilityFilter(todo: Todo, visibility: VisibilityFilter): boolean {
+  switch (visibility) {
+    case "all":
+      return true
+
+    case "done":
+      return todo.done
+
+    case "tbd":
+      return !todo.done
+
+    default:
+      const exhaustive: never = visibility
+  }
+
+  throw Error("unreachable")
 }

@@ -17,7 +17,7 @@ const Register: React.FC = () => {
   return (
     <Container size="small" className={styles.container}>
       <Card elevation={3}>
-        <H2>Sign up</H2>
+        <H2 className={styles.header}>Sign up</H2>
 
         {state.auth.mode.current === "error" &&
         <Callout className={styles.error} intent="danger">{state.auth.error}</Callout>}

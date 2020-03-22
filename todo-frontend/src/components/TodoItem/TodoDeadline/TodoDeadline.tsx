@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import { Button, ButtonGroup, Intent, Popover, Tag } from "@blueprintjs/core"
 import { DatePicker, TimePrecision } from "@blueprintjs/datetime"
 import { format, isYesterday, isToday, isTomorrow, isBefore, addHours } from "date-fns"
-import { Todo } from "../../app/todos/types"
+import { Todo } from "../../../app/todos/types"
 import styles from "./styles.module.scss"
 
 const formatDeadline = (value: Date | string |  null): [string, Intent] => {

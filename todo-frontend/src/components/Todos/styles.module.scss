@@ -1,3 +1,5 @@
+@import "../../variables";
+
 .container {
   margin-top    : 4rem;
   margin-bottom : 4rem;
@@ -5,4 +7,12 @@
 
 .input {
   margin-bottom : 1rem;
+}
+
+.empty {
+  font-family : $fontSerif;
+  font-size   : 16px;
+  font-style  : italic;
+  text-align  : center;
+  color       : #939393;
 }
