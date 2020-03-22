@@ -1,0 +1,34 @@
+.container {
+  font-size       : 15px;
+  display         : flex;
+  align-content   : flex-end;
+  flex-direction  : row;
+  justify-content : flex-end;
+  margin-bottom   : 1rem;
+
+  > div {
+    padding     : 0 0.75rem;
+    cursor      : default;
+    color       : gray;
+    border-left : 1px solid rgba(127, 127, 127, 0.33);
+
+    &:first-child {
+      border-left : none;
+    }
+
+    &:last-child {
+      padding-right : 0;
+    }
+
+    &:hover {
+      transition : color 400ms;
+      color      : black;
+    }
+
+    .action {
+      font-weight : 600;
+      cursor      : pointer;
+
+    }
+  }
+}

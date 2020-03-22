@@ -1,5 +1,3 @@
-export type Show = "all" | "only-done" | "only-todo"
-
 export type TodoId = string
 
 export interface Todo {
@@ -15,3 +13,9 @@ export type TodoPatch = Partial<Omit<Todo, "id">>
 export interface TodoCreate {
   content: string
 }
+
+export const dueFilters = ["off", "today", "in 2 days", "this week", "next week"] as const
+export type DueFilter = typeof dueFilters[number]
+
+export const sizeFilters = [5, 10, 25, 1000]
+export type SizeFilter = typeof sizeFilters[number]

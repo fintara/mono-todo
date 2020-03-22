@@ -1,4 +1,4 @@
-import { statemachine, Statemachine } from "overmind"
+import { Derive, statemachine, Statemachine } from "overmind"
 import { User } from "./types"
 
 type State = {
@@ -6,6 +6,7 @@ type State = {
   token: string | null
   error: string | null
   user: User | null
+  isAuthenticated: Derive<State, boolean>
 }
 
 export const state: State = {
@@ -26,4 +27,5 @@ export const state: State = {
   token: null,
   error: null,
   user: null,
+  isAuthenticated: (self) => self.token !== null
 }

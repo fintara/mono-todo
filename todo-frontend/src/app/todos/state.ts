@@ -1,12 +1,16 @@
 import { Derive, statemachine, Statemachine } from "overmind"
-import { Show, Todo, TodoId } from "./types"
+import { DueFilter, SizeFilter, Todo, TodoId } from "./types"
+import { showDueFilter } from "./utils"
 
 type State = {
   mode: Statemachine<"loading" | "loaded">
   items: Record<TodoId, Todo>
   list: Derive<State, TodoId[]>
-  disabled: TodoId[],
-  show: Show,
+  count: Derive<State, number>
+  disabled: TodoId[]
+  page: number
+  pageSize: SizeFilter
+  dueFilter: DueFilter
 }
 
 export const state: State = {
@@ -18,7 +22,14 @@ export const state: State = {
     }
   }),
   items: {},
-  list: (self) => Object.keys(self.items).sort((a, b) => self.items[a].createdAt.getTime() - self.items[b].createdAt.getTime()),
+  list: (self) => Object
+    .keys(self.items)
+    .sort((a, b) => self.items[b].createdAt.getTime() - self.items[a].createdAt.getTime())
+    .filter(it => showDueFilter(self.items[it], self.dueFilter, new Date()))
+    .slice(self.page * self.pageSize, (1 + self.page) * self.pageSize),
+  count: (self) => Object.keys(self.items).length,
   disabled: [],
-  show: "all"
+  page: 0,
+  pageSize: 1000,
+  dueFilter: "off",
 }

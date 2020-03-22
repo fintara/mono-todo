@@ -6,6 +6,7 @@ import { useApp } from "../../app"
 import TodosList from "../TodosList"
 import TodoInput from "../TodoInput"
 import { TodoId } from "../../app/todos/types"
+import TodosToolbar from "../TodosToolbar"
 
 const Todos: React.FC = () => {
   const { state, actions } = useApp()
@@ -20,6 +21,9 @@ const Todos: React.FC = () => {
 
   return (
     <Container size="normal" className={styles.container}>
+
+      <TodosToolbar />
+
       <Card elevation={3}>
 
         <div className={styles.input}>

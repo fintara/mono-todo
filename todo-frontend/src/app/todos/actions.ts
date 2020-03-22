@@ -1,9 +1,7 @@
 import { Action, AsyncAction, mutate, Operator } from "overmind"
-import { Show, Todo, TodoId } from "./types"
+import { DueFilter, SizeFilter, Todo, TodoId } from "./types"
 import { toMap } from "../common/utils"
 
-export const setShow: Operator<Show> =
-  mutate(({ state }, value) => state.todos.show = value)
 
 export const load: AsyncAction = async ({ state, actions, effects }) => {
   return state.todos.mode.loading(async () => {
@@ -14,7 +12,6 @@ export const load: AsyncAction = async ({ state, actions, effects }) => {
           ...it,
           createdAt: new Date(it.createdAt),
         })))
-        actions.todos.setShow("all")
       })
     } catch (e) {
       console.error(e)
@@ -141,7 +138,31 @@ export const remove: AsyncAction<TodoId> = async ({ state, actions, effects }, i
   }
 }
 
+export const changeSize: Action<SizeFilter> = ({ state }, value) => {
+  state.todos.pageSize = value
+}
+
+export const changeDue: Action<DueFilter> = ({ state }, value) => {
+  state.todos.dueFilter = value
+}
+
+export const nextPage: Action = ({ state }) => {
+  if (state.todos.count <= state.todos.page * state.todos.pageSize) {
+    return
+  }
+
+  state.todos.page++
+}
+
+export const previousPage: Action = ({ state }) => {
+  if (state.todos.page === 0) {
+    return
+  }
+
+  state.todos.page--;
+}
+
 export const reset: Action = ({ state }) => {
   state.todos.items = {}
-  state.todos.show = "all"
+  state.todos.dueFilter = "off"
 }

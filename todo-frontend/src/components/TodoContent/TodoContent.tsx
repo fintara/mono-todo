@@ -10,7 +10,7 @@ type ContentProps
 const Content: React.FC<ContentProps> = ({ content, onClick, className }) => (
   <span
     className={classNames(className, styles.readOnly, { [styles.editable]: !!onClick })}
-    title={content}
+    title={content.length > 85 ? content : undefined}
     onClick={() => onClick && onClick()}
   >
     {content}
@@ -38,6 +38,7 @@ const Editable: React.FC<EditableProps> = ({ content, onConfirm, onCancel, class
     value={value}
     onChange={setValue}
     onConfirm={handleBlur}
+    onCancel={onCancel}
     multiline={true}
     className={classNames(className, styles.textbox)}
   />

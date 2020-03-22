@@ -27,7 +27,9 @@ export const loginFromToken: Action<string> = ({ state, actions }, token) => {
     return state.auth.mode.authenticated(() => {
       state.auth.token = token
       actions.auth.loadUser()
-      actions.router.redirect(urls.todos)
+      // if (state.router.page === "home") {
+      //   actions.router.redirect(urls.todos)
+      // }
     })
   })
 }
