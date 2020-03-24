@@ -14,7 +14,7 @@ export const login: AsyncAction<Credentials> = async ({ state, actions, effects 
         actions.router.redirect(urls.todos)
       })
     } catch (e) {
-      console.error(e)
+      process.env.NODE_ENV === "development" && console.error(e)
       return state.auth.mode.error(() => {
         state.auth.error = "Could not log in"
       })
@@ -57,7 +57,7 @@ export const register: AsyncAction<Registration> = async ({ state, actions, effe
         effects.router.instance.redirect(urls.login)
       })
     } catch (e) {
-      console.error(e)
+      process.env.NODE_ENV === "development" && console.error(e)
       return state.auth.mode.error(() => {
         state.auth.error = "Could not register"
       })
@@ -69,7 +69,7 @@ export const loadUser: AsyncAction = async ({ state, actions, effects }) => {
   try {
     state.auth.user = await effects.auth.api.me()
   } catch (e) {
-    console.error(e)
+    process.env.NODE_ENV === "development" && console.error(e)
     actions.auth.logout()
   }
 }

@@ -7,3 +7,14 @@ import "mutationobserver-shim"
 
 // @ts-ignore
 global.MutationObserver = window.MutationObserver;
+
+// https://github.com/mui-org/material-ui/issues/15726#issuecomment-493124813
+// @ts-ignore
+global.document.createRange = () => ({
+  setStart: () => {},
+  setEnd: () => {},
+  commonAncestorContainer: {
+    nodeName: 'BODY',
+    ownerDocument: document,
+  },
+})

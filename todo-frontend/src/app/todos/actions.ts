@@ -14,7 +14,7 @@ export const load: AsyncAction = async ({ state, actions, effects }) => {
         })))
       })
     } catch (e) {
-      console.error(e)
+      process.env.NODE_ENV === "development" && console.error(e)
       actions.toaster.showError("Could not load todos.")
       return state.todos.mode.loaded()
     }
@@ -28,6 +28,7 @@ export const toggle: AsyncAction<TodoId> = async ({ state, actions, effects }, i
   try {
     await effects.todos.api.update(id, { done: item.done })
   } catch (e) {
+    process.env.NODE_ENV === "development" && console.error(e)
     item.done = !item.done
     actions.toaster.showError("Could not save changes.")
   }
@@ -48,6 +49,7 @@ export const edit: AsyncAction<{ id: TodoId, content: string }> = async ({ state
     await effects.todos.api.update(id, { content })
     actions.toaster.showSuccess("Todo was saved.")
   } catch (e) {
+    process.env.NODE_ENV === "development" && console.error(e)
     item.content = original
     actions.toaster.showError("Could not save changes.")
   }
@@ -70,6 +72,7 @@ export const changeDeadline: AsyncAction<{ id: TodoId, deadline: Date }> = async
     const updated = await effects.todos.api.update(id, { deadline })
     item.deadline = updated.deadline
   } catch (e) {
+    process.env.NODE_ENV === "development" && console.error(e)
     item.deadline = originalValue
     actions.toaster.showError("Could not save changes.")
   }
@@ -87,6 +90,7 @@ export const removeDeadline: AsyncAction<TodoId> = async ({ state, actions, effe
   try {
     await effects.todos.api.update(id, { deadline: new Date(0).toISOString() })
   } catch (e) {
+    process.env.NODE_ENV === "development" && console.error(e)
     item.deadline = originalValue
     actions.toaster.showError("Could not save changes.")
   }
@@ -110,7 +114,7 @@ export const add: AsyncAction<string> = async ({ state, actions, effects }, _con
     const todo = await effects.todos.api.create({ content })
     state.todos.items[todo.id] = {...todo, createdAt }
   } catch (e) {
-    console.error(e)
+    process.env.NODE_ENV === "development" && console.error(e)
     actions.toaster.showError("Could not add a new todo.")
   } finally {
     delete state.todos.items[todoOptimistic.id]
@@ -133,6 +137,7 @@ export const remove: AsyncAction<TodoId> = async ({ state, actions, effects }, i
     await effects.todos.api.delete(id)
     actions.toaster.showSuccess("Todo was removed.")
   } catch (e) {
+    process.env.NODE_ENV === "development" && console.error(e)
     state.todos.items[id] = original
     actions.toaster.showError("Could not remove the todo.")
   }

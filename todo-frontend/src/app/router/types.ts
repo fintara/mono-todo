@@ -8,6 +8,17 @@ export interface Router {
   redirect(url: string): void
 }
 
+export class NoopRouter implements Router {
+  initialize(routes: { [p: string]: (params: Params) => void }): void {
+  }
+
+  open(url: string): void {
+  }
+
+  redirect(url: string): void {
+  }
+}
+
 export type Page
   = "home"
   | "login"

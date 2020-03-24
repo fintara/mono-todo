@@ -1,4 +1,5 @@
 import { OnInitialize } from "overmind"
+import { isString, restore } from "../common/utils"
 
 const keys = {
   authentication: "token"
@@ -13,18 +14,19 @@ const onInitialize: OnInitialize = async ({ state, actions, effects }, instance)
     }
   })
 
-  const token = localStorage.getItem(keys.authentication)
-  if (token) {
-    actions.auth.loginFromToken(token)
-  }
+  restore(
+    effects.auth.storage.getItem(keys.authentication),
+    isString,
+    actions.auth.loginFromToken
+  )
 
   instance.reaction(
     (state) => state.auth.token,
     (value) => {
       if (value) {
-        localStorage.setItem(keys.authentication, value)
+        effects.auth.storage.setItem(keys.authentication, value)
       } else {
-        localStorage.removeItem(keys.authentication)
+        effects.auth.storage.removeItem(keys.authentication)
       }
     }
   )

@@ -25,3 +25,5 @@ export const api = new class {
   }
 
 }()
+
+export const storage: Storage = localStorage

@@ -59,10 +59,11 @@ describe("todos::actions", () => {
         }
       })
 
+      expect(overmind.state.todos.list).toHaveLength(0)
       await overmind.actions.todos.load()
       overmind.actions.todos.changeVisibility("all")
 
-      expect(overmind.state.todos.list).toEqual(todos.map(it => it.id))
+      todos.forEach(it => expect(expect(overmind.state.todos.list).toContain(it.id)))
       todos.forEach(todo => expect(overmind.state.todos.items[todo.id]).toEqual(todo))
     })
   })

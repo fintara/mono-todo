@@ -19,7 +19,7 @@ export const state: State = {
       authenticated: ["anonymous"],
 
       registering: ["error", "registered"],
-      registered: ["authenticating"],
+      registered: ["authenticating", "anonymous"],
 
       error: ["authenticating", "registering"]
     }
