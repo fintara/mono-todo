@@ -17,7 +17,7 @@ task<YarnTask>("yarn_install") {
 }
 
 task<YarnTask>("yarn_test") {
-  args = listOf("test", "--watchAll=false", "--verbose")
+  args = listOf("test", "--watchAll=false", "--verbose", "--coverage", "--coverageReporters=html")
 }
 
 tasks {
