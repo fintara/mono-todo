@@ -16,9 +16,10 @@ Example todo app featuring
 
 `./gradlew test`
 
-1. backend coverage:
+* backend coverage:
     * `./gradlew :todo-backend:clean :todo-backend:test :todo-backend:jacocoTestReport`
     * coverage report is in `./todo-backend/build/jacoco`
-2. frontend coverage:
+        * note that JaCoCo does not cover Kotlin's inline functions (see [jacoco/jacoco#654](https://github.com/jacoco/jacoco/issues/654))
+* frontend coverage:
     * `./gradlew :todo-frontend:test`
     * coverage report is in `./todo-frontend/coverage`
