@@ -18,11 +18,10 @@ private fun <T> Spec<T>.content(selector: (T) -> String?) = field(selector, "con
 data class TodoCreate(
     val content: String
 ) {
-    companion object : Validated<TodoCreate> {
-        override val spec: Validation<TodoCreate> =
-            createSpec {
-                content(TodoCreate::content)
-            }
+    companion object {
+        val validator = createValidator<TodoCreate> {
+            content(TodoCreate::content)
+        }
     }
 }
 
@@ -35,11 +34,10 @@ data class TodoPatch(
     val done: Boolean? = null,
     val deadline: Instant? = null
 ) {
-    companion object : Validated<TodoPatch> {
-        override val spec: Validation<TodoPatch> =
-            createSpec {
-                content(TodoPatch::content)
-            }
+    companion object {
+        val validator = createValidator<TodoPatch> {
+            content(TodoPatch::content)
+        }
     }
 }
 

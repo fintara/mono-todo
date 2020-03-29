@@ -8,7 +8,8 @@ import com.tsovedenski.todo.exceptions.ValidationException
 
 interface Validated <T> {
     val spec: Validation<T>
-    fun validate(item: T): ValidationResult<T> = spec(item)
+    fun T.validateVerbose(): ValidationResult<T> = spec(this)
+    fun T.validate(): T = validateVerbose().valid()
 }
 
 typealias ValidationResult <T> = Either<Set<ValidationError>, T>
@@ -22,11 +23,11 @@ fun <T> ValidationResult<T>.valid(): T = getOrThrow(::ValidationException)
 annotation class ValidationDsl
 
 @ValidationDsl
-class Spec <T> internal constructor() {
+class Spec <T> {
 
     private val fields = mutableListOf<(T) -> Set<ValidationError>>()
 
-    fun <R> field(selector: (T) -> R?, name: String, body: FieldSpec<R>.() -> Unit = {}) {
+    fun <R> field(selector: (T) -> R?, name: String, body: FieldSpec<R>.() -> Unit) {
         val constraints = mutableListOf<Constraint<R>>()
         val spec = FieldSpec(constraints)
         spec.body()
@@ -64,17 +65,18 @@ fun FieldSpec<String>.maxLength(value: Int) = add(Constraint.MaxLength(value))
 fun FieldSpec<Int>.min(value: Int) = add(Constraint.Min(value))
 fun FieldSpec<Int>.max(value: Int) = add(Constraint.Max(value))
 
-fun FieldSpec<Iterable<*>>.size(value: Int) = add(Constraint.IterableSize(value))
+fun FieldSpec<Iterable<Any?>>.size(value: Int) = add(Constraint.Iterable.Size(value))
 fun <T> FieldSpec<Iterable<T>>.all(body: FieldSpec<T>.() -> Unit) {
     val list = mutableListOf<Constraint<T>>()
     val spec = FieldSpec(list)
     spec.body()
     list.forEach {
-        add(Constraint.All(it))
+        add(Constraint.Iterable.All(it))
     }
 }
 
 abstract class Constraint <in T> (val name: String, val predicate: (T) -> Boolean) {
+
     companion object {
         // https://gist.github.com/ironic-name/f8e8479c76e80d470cacd91001e7b45b
         private val EMAIL_REGEX =
@@ -90,10 +92,18 @@ abstract class Constraint <in T> (val name: String, val predicate: (T) -> Boolea
     data class Min(val value: Int) : Constraint<Int>("min:$value", { it >= value })
     data class Max(val value: Int) : Constraint<Int>("max:$value", { it <= value })
 
-    data class IterableSize(val value: Int) : Constraint<Iterable<*>>("iterable_size:$value", { it.count() == value })
-    data class All <T> (val constraint: Constraint<T>) : Constraint<Iterable<T>>("all:${constraint.name}", { it.all(constraint.predicate) })
+    abstract class Iterable <in E> (name: String, predicate: (kotlin.collections.Iterable<E>) -> Boolean)
+        : Constraint<kotlin.collections.Iterable<E>>("iterable_$name", predicate) {
+        data class Size (val value: Int) : Iterable<Any?>("size", { it.count() == value })
+        data class All <E> (val constraint: Constraint<E>) : Iterable<E>("all", { it.all(constraint.predicate) })
+    }
 }
 
 fun <T> createSpec(body: Spec<T>.() -> Unit): Validation<T> {
     return Spec<T>().apply(body).asValidation()
 }
+
+fun <T> createValidator(body: Spec<T>.() -> Unit): Validated<T> =
+    object : Validated<T> {
+        override val spec: Validation<T> = createSpec(body)
+    }

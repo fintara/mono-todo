@@ -23,7 +23,7 @@ class AuthHandler (
     }
 
     fun login(request: Request): Response {
-        val body = Credentials.validate(credentialsLens(request)).valid()
+        val body = Credentials.validator.run { credentialsLens(request).validate() }
         return findByCredentials(body).fold(
             { Response(Status.UNAUTHORIZED) },
             { user -> Response(Status.OK).body(Token(authenticator.token(Authentication(user.id)))) }
@@ -31,7 +31,7 @@ class AuthHandler (
     }
 
     fun signup(request: Request): Response {
-        val body = Registration.validate(registrationLens(request)).valid()
+        val body = Registration.validator.run { registrationLens(request).validate() }
         return insertUser(body).fold(
             { Response(Status.BAD_REQUEST).body(it) },
             { Response(Status.NO_CONTENT) }

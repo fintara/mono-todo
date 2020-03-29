@@ -12,13 +12,11 @@ data class Credentials(
     val email: String,
     val password: String
 ) {
-    companion object :
-        Validated<Credentials> {
-        override val spec: Validation<Credentials> =
-            createSpec {
-                email(Credentials::email)
-                password(Credentials::password)
-            }
+    companion object {
+        val validator = createValidator<Credentials> {
+            email(Credentials::email)
+            password(Credentials::password)
+        }
     }
 }
 
@@ -28,16 +26,14 @@ data class Registration(
     val password: String,
     val name: String?
 ) {
-    companion object :
-        Validated<Registration> {
-        override val spec =
-            createSpec<Registration> {
-                email(Registration::email)
-                password(Registration::password)
-                field(Registration::name, "name") {
-                    notBlank
-                }
+    companion object {
+        val validator = createValidator<Registration> {
+            email(Registration::email)
+            password(Registration::password)
+            field(Registration::name, "name") {
+                notBlank
             }
+        }
     }
 }
 

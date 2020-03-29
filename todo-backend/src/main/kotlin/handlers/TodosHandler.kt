@@ -47,7 +47,7 @@ class TodosHandler (
         with(permissions) { authentication can CreateTodo }
 
         val userId = authentication.userId
-        val body = TodoCreate.validate(createLens(request)).valid()
+        val body = TodoCreate.validator.run { createLens(request).validate() }
         val todo = createTodo(body, userId).toDTO()
         return Response(Status.CREATED).with(lens of todo)
     }
@@ -58,7 +58,7 @@ class TodosHandler (
         val authentication = credentials(request)
         with(permissions) { authentication can EditTodo(todo.payload) }
 
-        val patch  = TodoPatch.validate(patchLens(request)).valid()
+        val patch  = TodoPatch.validator.run { patchLens(request).validate() }
         val updated = updateTodo(todo, patch).toDTO()
 
         return Response(Status.OK).with(lens of updated)
