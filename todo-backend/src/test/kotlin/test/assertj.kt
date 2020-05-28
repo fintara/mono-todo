@@ -1,5 +1,6 @@
 package com.tsovedenski.todo.test
 
+import com.tsovedenski.todo.Either
 import net.javacrumbs.jsonunit.assertj.JsonAssert
 import net.javacrumbs.jsonunit.assertj.JsonAssertions
 import org.assertj.core.api.AbstractStringAssert

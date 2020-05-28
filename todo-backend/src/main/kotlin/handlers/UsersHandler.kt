@@ -17,7 +17,7 @@ class UsersHandler (
     private val credentials: (Request) -> Authentication,
     private val findById: (UserId) -> UserEntity?,
     private val updateUser: (UserEntity, UserPatch) -> UserEntity
-    ) {
+) {
 
     companion object {
         private val patchLens = bodyLens<UserPatch>()
@@ -26,21 +26,19 @@ class UsersHandler (
     private val findByCredentials = credentials andThen Authentication::userId andThen findById
 
     fun me(request: Request): Response {
-        val user = findByCredentials(request) ?: throw EntityNotFoundException(
-            "User",
-            "me"
-        )
+        val user = resolveMe(request)
         return Response(Status.OK).body(user.toDTO())
     }
 
     fun editMe(request: Request): Response {
-        val user = findByCredentials(request) ?: throw EntityNotFoundException(
-            "User",
-            "me"
-        )
+        val user = resolveMe(request)
         val patch  = patchLens(request)
         val updated = updateUser(user, patch).toDTO()
 
         return Response(Status.OK).body(updated)
     }
+
+    private fun resolveMe(request: Request): UserEntity =
+        findByCredentials(request)
+            ?: throw EntityNotFoundException("User", "me")
 }

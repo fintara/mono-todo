@@ -3,10 +3,8 @@ package com.tsovedenski.todo.handlers
 import com.tsovedenski.todo.*
 import com.tsovedenski.todo.exceptions.AuthenticationError
 import com.tsovedenski.todo.exceptions.RegistrationError
+import com.tsovedenski.todo.models.*
 import com.tsovedenski.todo.models.Credentials
-import com.tsovedenski.todo.models.Registration
-import com.tsovedenski.todo.models.UserEntity
-import com.tsovedenski.todo.models.UserId
 import org.http4k.core.*
 
 /**
@@ -22,12 +20,19 @@ class AuthHandler (
         private val registrationLens = bodyLens<Registration>()
     }
 
+    private val userToToken = UserEntity::id andThen
+            ::Authentication andThen
+            authenticator::token andThen
+            ::Token
+
     fun login(request: Request): Response {
         val body = Credentials.validator.run { credentialsLens(request).validate() }
-        return findByCredentials(body).fold(
-            { Response(Status.UNAUTHORIZED) },
-            { user -> Response(Status.OK).body(Token(authenticator.token(Authentication(user.id)))) }
-        )
+        return findByCredentials(body)
+            .map(userToToken)
+            .fold(
+                { Response(Status.UNAUTHORIZED) },
+                { token -> Response(Status.OK).body(token) }
+            )
     }
 
     fun signup(request: Request): Response {
